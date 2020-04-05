@@ -6,7 +6,7 @@ Routes and views for the flask application.
 from datetime import datetime
 from json import JSONDecodeError
 import os
-#some test info
+
 from flask import Markup
 from flask import render_template, redirect
 from flask.ext.wtf import Form
@@ -66,7 +66,7 @@ NEW_INTERNATIONAL_EVENTS = CREATE_INTERNATIONAL_EVENTS.get_render_events()
 NEW_ALL_EVENTS = CREATE_ALL_EVENTS.get_render_events()
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
-#some changes
+
 @app.route('/')
 @app.route('/home')
 def home():
@@ -238,10 +238,18 @@ def login():
 
 @app.route('/archive')
 def archive():
-    return render_template('archive.html', 
+    try:
+        CREATE_RUSSIAN_EVENTS.update("archive_events.json")
+        archive_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        for i, _ in enumerate(archive_events):
+            archive_events[i] = Markup(archive_events[i])
+    except JSONDecodeError:
+        archive_events = []
+    return render_template('archive.html',
                            title='Archive',
-                           # events = archive_events DOPISAT' SHINU
+                           event=archive_events
                            )
+
 @app.route('/event_calendar')
 def event_calendar():
     try:
