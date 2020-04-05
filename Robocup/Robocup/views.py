@@ -238,10 +238,18 @@ def login():
 
 @app.route('/archive')
 def archive():
-    return render_template('archive.html', 
+    try:
+        CREATE_RUSSIAN_EVENTS.update("archive_events.json")
+        archive_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        for i, _ in enumerate(archive_events):
+            archive_events[i] = Markup(archive_events[i])
+    except JSONDecodeError:
+        archive_events = []
+    return render_template('archive.html',
                            title='Archive',
-                           # events = archive_events DOPISAT' SHINU
+                           event=archive_events
                            )
+
 @app.route('/event_calendar')
 def event_calendar():
     try:

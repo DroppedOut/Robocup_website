@@ -2,6 +2,6 @@ Team name:Keka-team
 Member 1 name:wsadfasdf
 Member 2 name:sadfasdf
 Member 3 name:Keks10
-Member 4 name:asdasd
+Member 4 name:KLek
 Mentor name:Константин Коннов
-League:RobocupJuniorRescue OnStage
+League:RobocupJuniorRescue Line
