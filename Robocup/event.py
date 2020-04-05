@@ -5,7 +5,7 @@ class Event:
         self.sity = None
         self.desc = None
         self.country = None
-        self.adress = "const"
+        self.adress = None
         self.date = None
         self.event = {}
     def make_event(self):
