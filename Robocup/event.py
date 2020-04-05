@@ -12,7 +12,7 @@ class Event:
         self.event = {"name":"<h2> " + str(self.name) + "<br><strong> " \
                      + self.status + "</strong></h2>",
                      "country":'<p> <li style="list-style-type: none;" > \
-                     <a href="#" class="" data-toggle="dropdown" role="button" \
+                     <a href="#" class="" style="padding: 0px" data-toggle="dropdown" role="button" \
                      aria-haspopup="true" aria-expanded="false"><strong>Инфо</strong> \
                      <span class="caret"></span></a> <ul class="dropdown-menu"> \
                   <li>'+ self.desc +'</li></ul> \

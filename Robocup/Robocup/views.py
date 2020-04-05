@@ -235,9 +235,47 @@ def login():
     return render_template('register.html', 
                            title='Sign In',
                            form=form)
+
+@app.route('/archive')
+def archive():
+    return render_template('archive.html', 
+                           title='Archive',
+                           # events = archive_events DOPISAT' SHINU
+                           )
 @app.route('/event_calendar')
 def event_calendar():
-   return render_template('event_calendar.html',
+    try:
+        CREATE_INTERNATIONAL_EVENTS.update("international_events.json")
+        new_int_events = CREATE_INTERNATIONAL_EVENTS.get_render_events()
+       
+         #i really don't know why it doesn't work with normal for
+        for i, _ in enumerate(new_int_events): 
+            new_int_events[i] = Markup(new_int_events[i])
+    except JSONDecodeError:
+        new_int_events = []
+    try:
+        CREATE_REGIONAL_EVENTS.update("regional_events.json")
+        new_reg_events = CREATE_REGIONAL_EVENTS.get_render_events()
+        
+         #i really don't know why it doesn't work with normal for
+        for i, _ in enumerate(new_reg_events): 
+            new_reg_events[i] = Markup(new_reg_events[i])
+    except JSONDecodeError:
+        new_reg_events = []
+    try:
+        CREATE_RUSSIAN_EVENTS.update("russian_events.json")
+        new_rus_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        
+         #i really don't know why it doesn't work with normal for
+        for i, _ in enumerate(new_rus_events): 
+            new_rus_events[i] = Markup(new_rus_events[i])
+    except JSONDecodeError:
+        new_rus_events = []
+    return render_template('event_calendar.html',
                            title='Error',
                            year=datetime.now().year,
-                           message='Dead.')
+                           message='Dead.',
+                           reg_events = new_reg_events,
+                           int_events = new_int_events,
+                           rus_events = new_rus_events
+                           )
