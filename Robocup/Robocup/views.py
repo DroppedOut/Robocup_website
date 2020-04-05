@@ -53,6 +53,7 @@ class AdminForm(Form):
     Description = TextField('Descriptoin', validators=[Required()])
     Country = TextField('Country')
     Date = DateField('Date', validators=[Required()])
+    Info = TextField('EventName', validators=[Required()])
 CREATE_RUSSIAN_EVENTS = RenderEvent("russian_events.json")
 CREATE_REGIONAL_EVENTS = RenderEvent("regional_events.json")
 CREATE_INTERNATIONAL_EVENTS = RenderEvent("international_events.json")
