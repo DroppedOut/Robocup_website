@@ -1,13 +1,16 @@
 {% extends "layout.html" %}
 {% block content %}
+<style>A:visited{
+color:#333;    }
+</style>
 <h1 class="lead"> Календарь мероприятий:</h1><br>
 <div class="slider">
 <div class="row">
-  <div class="col-4">
+  <div class="col-4" style="text-align: center; font-size:large;">
     <div class="list-group" id="list-tab" role="tablist">
-      <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Региональные</a>
-      <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Всероссийские</a>
-      <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Mеждународные</a>
+      <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="/regional_events" role="tab" aria-controls="messages">Региональные</a>
+      <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="/russian_events" role="tab" aria-controls="profile">Всероссийские</a>
+      <a class="list-group-item " id="list-messages-list" data-toggle="list" href="/international_events" role="tab" aria-controls="messages">Mеждународные</a>
 
     </div>
 
