@@ -6,6 +6,7 @@
     height: 300px;
     margin-bottom: 130px;
     margin: auto;
+
 }
 /* Картинка мастабируется по отношению к родительскому элементу */
 .slider .item img {
