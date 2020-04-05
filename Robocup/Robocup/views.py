@@ -14,6 +14,8 @@ from flask_wtf.file import FileField, FileRequired
 from wtforms import TextField, SelectField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Required
+from wtforms.fields import StringField
+from wtforms.widgets import TextArea
 # from wtforms.validators import ValidationError
 
 import transliterate
@@ -50,10 +52,10 @@ class AdminForm(Form):
         ('International', 'Международное'),
         ])
     Sity = TextField('Sity', validators=[Required()])
-    Description = TextField('Descriptoin', validators=[Required()])
+    Adress = TextField('Addr', validators=[Required()])
     Country = TextField('Country')
     Date = DateField('Date', validators=[Required()])
-    Info = TextField('EventName', validators=[Required()])
+    Desc = StringField(u'Text', widget=TextArea(),validators=[Required()])
 CREATE_RUSSIAN_EVENTS = RenderEvent("russian_events.json")
 CREATE_REGIONAL_EVENTS = RenderEvent("regional_events.json")
 CREATE_INTERNATIONAL_EVENTS = RenderEvent("international_events.json")
@@ -172,7 +174,8 @@ def admin():
         print(form.Status.data)
         new_event.sity = form.Sity.data
         new_event.date = form.Date.data
-        new_event.desc = form.Description.data
+        new_event.desc = form.Desc.data
+        new_event.adress = form.Adress.data
         save_to_json = ""
         if new_event.status == 'Russian':
             save_to_json = "russian_events.json"
