@@ -63,7 +63,7 @@ NEW_INTERNATIONAL_EVENTS = CREATE_INTERNATIONAL_EVENTS.get_render_events()
 NEW_ALL_EVENTS = CREATE_ALL_EVENTS.get_render_events()
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
-
+#some changes
 @app.route('/')
 @app.route('/home')
 def home():
