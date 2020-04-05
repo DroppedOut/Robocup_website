@@ -24,13 +24,13 @@ class RenderEvent:
 
         self.events.clear()
         self.render_events.clear()
-        self.check_outdated(json_file)
+        if json_file != "archive_events.json":
+            self.check_outdated(json_file)
         with open(json_file, "r",encoding='utf-8') as read_file:
             self.data = json.load(read_file)
             sorted_events = OrderedDict(self.data)
             self.data = dict(OrderedDict(sorted(sorted_events.items(), key=lambda t: int(t[1]["date"][15:17])+int(t[1]["date"][18:20])*30+int(t[1]["date"][21:25])*365)))
             #sort 
-            print (self.data)
             #print(self.data)
             index = -1
             for key in self.data:
@@ -57,17 +57,19 @@ class RenderEvent:
     def check_outdated(self,json_file):
         with open(json_file, "r",encoding='utf-8') as read_file:
             data_all = json.load(read_file)
-            data_clean = data_all
-            sortkey=datetime.now().year*365+datetime.now().month*30+datetime.now().day
-            for key in list(data_all.keys()):
-                dt = int(data_all[key]["date"][15:17])+int(data_all[key]["date"][18:20])*30+int(data_all[key]["date"][21:25])*365
-                if dt<sortkey:
-                    with open("archive_events.json", "w", encoding="utf-8") as file:
-                        json.dump(data_all[key], file)
-                        data_all.pop(key)
-                    data_clean=data_all
-            with open(json_file, "w", encoding="utf-8") as file:
-                json.dump(data_clean, file)
+        with open("archive_events.json", "r", encoding="utf-8") as file:
+            data_old = json.load(file)
+        sortkey=datetime.now().year*365+datetime.now().month*30+datetime.now().day
+        for key in list(data_all.keys()):
+            dt = int(data_all[key]["date"][15:17])+int(data_all[key]["date"][18:20])*30+int(data_all[key]["date"][21:25])*365
+            if dt<sortkey:
+                with open("archive_events.json", "w", encoding="utf-8") as file:
+                    data_old[key] = data_all[key]
+                    print(data_old[key])
+                    json.dump(data_old, file)
+                    data_all.pop(key)
+        with open(json_file, "w", encoding="utf-8") as file:
+            json.dump(data_all, file)
             
     def update_all(self, json_file1,json_file2,json_file3):
         self.events.clear()
