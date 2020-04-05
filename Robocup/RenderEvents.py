@@ -3,8 +3,7 @@ import io
 import random
 from collections import OrderedDict
 from datetime import datetime
-import os.path
-
+#import os
 class RenderEvent:
 
     def __init__(self, json_file1,json_file2=".",json_file3="."):
@@ -12,12 +11,6 @@ class RenderEvent:
         self.render_events = []
         self.data = {}
         if json_file2==".":
-            if not os.path.exists(json_file1):
-                with open(json_file1, "w",encoding='utf-8') as file:
-                        json.dump(self.data,file)
-            if not os.path.exists("archive_events.json"):
-                with open("archive_events.json", "w",encoding='utf-8') as file:
-                        json.dump(self.data,file)
             with open(json_file1, "r", encoding='utf-8') as read_file:
                 try:
                     self.update_all(json_file1,json_file2,json_file3)
@@ -25,23 +18,7 @@ class RenderEvent:
                     self.data = {}
                     print("feels bad man")
         else:
-            if not os.path.exists(json_file1):
-                with open(json_file1, "w",encoding='utf-8') as file:
-                        json.dump(self.data,file)
-            if not os.path.exists(json_file2):
-                with open(json_file2, "w",encoding='utf-8') as file:
-                        json.dump(self.data,file)
-            if not os.path.exists(json_file3):
-                with open(json_file3, "w",encoding='utf-8') as file:
-                        json.dump(self.data,file)
-            if not os.path.exists("archive_events.json"):
-                with open("archive_events.json", "w",encoding='utf-8') as file:
-                        json.dump(self.data,file)
-            try:
-                self.update(json_file1)
-            except:
-                self.data = {}
-                print("feels bad man")
+            self.update(json_file1)
 
     def update(self, json_file):
 
@@ -52,11 +29,7 @@ class RenderEvent:
         with open(json_file, "r",encoding='utf-8') as read_file:
             self.data = json.load(read_file)
             sorted_events = OrderedDict(self.data)
-
-            if json_file != "archive_events.json":
-                self.data = dict(OrderedDict(sorted(sorted_events.items(), key=lambda t: int(t[1]["date"][15:17])+int(t[1]["date"][18:20])*30+int(t[1]["date"][21:25])*365)))
-            else:
-                self.data = dict(OrderedDict(sorted(sorted_events.items(), key=lambda t: -(int(t[1]["date"][15:17])+int(t[1]["date"][18:20])*30+int(t[1]["date"][21:25])*365))))
+            self.data = dict(OrderedDict(sorted(sorted_events.items(), key=lambda t: int(t[1]["date"][15:17])+int(t[1]["date"][18:20])*30+int(t[1]["date"][21:25])*365)))
             #sort 
             #print(self.data)
             index = -1
