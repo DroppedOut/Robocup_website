@@ -29,7 +29,11 @@ class RenderEvent:
         with open(json_file, "r",encoding='utf-8') as read_file:
             self.data = json.load(read_file)
             sorted_events = OrderedDict(self.data)
-            self.data = dict(OrderedDict(sorted(sorted_events.items(), key=lambda t: int(t[1]["date"][15:17])+int(t[1]["date"][18:20])*30+int(t[1]["date"][21:25])*365)))
+
+            if json_file != "archive_events.json":
+                self.data = dict(OrderedDict(sorted(sorted_events.items(), key=lambda t: int(t[1]["date"][15:17])+int(t[1]["date"][18:20])*30+int(t[1]["date"][21:25])*365)))
+            else:
+                self.data = dict(OrderedDict(sorted(sorted_events.items(), key=lambda t: -(int(t[1]["date"][15:17])+int(t[1]["date"][18:20])*30+int(t[1]["date"][21:25])*365))))
             #sort 
             #print(self.data)
             index = -1
