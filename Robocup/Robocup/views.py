@@ -60,10 +60,6 @@ CREATE_RUSSIAN_EVENTS = RenderEvent("russian_events.json")
 CREATE_REGIONAL_EVENTS = RenderEvent("regional_events.json")
 CREATE_INTERNATIONAL_EVENTS = RenderEvent("international_events.json")
 CREATE_ALL_EVENTS = RenderEvent("russian_events.json","regional_events.json","international_events.json")
-NEW_RUSSIAN_EVENTS = CREATE_RUSSIAN_EVENTS.get_render_events()
-NEW_REGIONAL_EVENTS = CREATE_REGIONAL_EVENTS.get_render_events()
-NEW_INTERNATIONAL_EVENTS = CREATE_INTERNATIONAL_EVENTS.get_render_events()
-NEW_ALL_EVENTS = CREATE_ALL_EVENTS.get_render_events()
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 
