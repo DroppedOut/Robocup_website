@@ -2,7 +2,6 @@
 Routes and views for the flask application.
 """
 #import sqlite3
-# test comment to git
 from datetime import datetime
 from json import JSONDecodeError
 import os
@@ -56,14 +55,9 @@ class AdminForm(Form):
     Country = TextField('Country')
     Date = DateField('Date', validators=[Required()])
     Desc = StringField(u'Text', widget=TextArea(),validators=[Required()])
-CREATE_RUSSIAN_EVENTS = RenderEvent("russian_events.json")
-CREATE_REGIONAL_EVENTS = RenderEvent("regional_events.json")
-CREATE_INTERNATIONAL_EVENTS = RenderEvent("international_events.json")
-CREATE_ALL_EVENTS = RenderEvent("russian_events.json","regional_events.json","international_events.json")
-NEW_RUSSIAN_EVENTS = CREATE_RUSSIAN_EVENTS.get_render_events()
-NEW_REGIONAL_EVENTS = CREATE_REGIONAL_EVENTS.get_render_events()
-NEW_INTERNATIONAL_EVENTS = CREATE_INTERNATIONAL_EVENTS.get_render_events()
-NEW_ALL_EVENTS = CREATE_ALL_EVENTS.get_render_events()
+
+ALL_EVENTS_RENDERER = RenderEvent("russian_events.json","regional_events.json","international_events.json")
+EVENTS_RENDERER = RenderEvent("russian_events.json")
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 
@@ -72,9 +66,8 @@ app.config['SECRET_KEY'] = SECRET_KEY
 def home():
     """Renders the home page."""
     try:
-        CREATE_ALL_EVENTS.update_all("russian_events.json","regional_events.json","international_events.json")
-        events = CREATE_ALL_EVENTS.get_render_events()
-        print(events)
+        ALL_EVENTS_RENDERER.update_all("russian_events.json","regional_events.json","international_events.json")
+        events = ALL_EVENTS_RENDERER.get_render_events()
          #i really don't know why it doesn't work with normal for
         for i, _ in enumerate(events): 
             events[i] = Markup(events[i])
@@ -98,8 +91,8 @@ def contact():
 def russian_events():
     """Renders the about page."""
     try:
-        CREATE_RUSSIAN_EVENTS.update("russian_events.json")
-        new_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        EVENTS_RENDERER.update("russian_events.json")
+        new_events = EVENTS_RENDERER.get_render_events()
         print(new_events)
         # i really don't know why it doesn't work with normal for
         for i, _ in enumerate(new_events): 
@@ -113,11 +106,11 @@ def russian_events():
                            event=new_events)
      
 @app.route('/regional_events')
-def regioanl_events():
+def regional_events():
     """Renders the about page."""
     try:
-        CREATE_RUSSIAN_EVENTS.update("regional_events.json")
-        new_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        EVENTS_RENDERER.update("regional_events.json")
+        new_events = EVENTS_RENDERER.get_render_events()
        # print (new_events)
  
         for i, _ in enumerate(new_events):
@@ -135,8 +128,8 @@ def regioanl_events():
 def international_events():
     """Renders the about page."""
     try:
-        CREATE_RUSSIAN_EVENTS.update("international_events.json")
-        new_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        EVENTS_RENDERER.update("international_events.json")
+        new_events = EVENTS_RENDERER.get_render_events()
         print(new_events)
  
         for i, _ in enumerate(new_events):
@@ -179,15 +172,15 @@ def admin():
         save_to_json = ""
         if new_event.status == 'Russian':
             save_to_json = "russian_events.json"
-            CREATE_RUSSIAN_EVENTS.save_new_event(new_event.make_event(),
+            EVENTS_RENDERER.save_new_event(new_event.make_event(),
                                                  new_event.name, save_to_json)
         if new_event.status == 'International':
             save_to_json = "international_events.json" 
-            CREATE_INTERNATIONAL_EVENTS.save_new_event(new_event.make_event(),
+            EVENTS_RENDERER.save_new_event(new_event.make_event(),
                                                        new_event.name, save_to_json)            
         if new_event.status == 'Regional':
             save_to_json = "regional_events.json"  
-            CREATE_REGIONAL_EVENTS.save_new_event(new_event.make_event(),
+            EVENTS_RENDERER.save_new_event(new_event.make_event(),
                                                   new_event.name, save_to_json)
         #events = create_events.get_render_events()
         return redirect('/')
@@ -239,8 +232,8 @@ def login():
 @app.route('/archive')
 def archive():
     try:
-        CREATE_RUSSIAN_EVENTS.update("archive_events.json")
-        archive_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        EVENTS_RENDERER.update("archive_events.json")
+        archive_events = EVENTS_RENDERER.get_render_events()
         for i, _ in enumerate(archive_events):
             archive_events[i] = Markup(archive_events[i])
     except JSONDecodeError:
@@ -253,8 +246,8 @@ def archive():
 @app.route('/event_calendar')
 def event_calendar():
     try:
-        CREATE_INTERNATIONAL_EVENTS.update("international_events.json")
-        new_int_events = CREATE_INTERNATIONAL_EVENTS.get_render_events()
+        EVENTS_RENDERER.update("international_events.json")
+        new_int_events = EVENTS_RENDERER.get_render_events()
        
          #i really don't know why it doesn't work with normal for
         for i, _ in enumerate(new_int_events): 
@@ -262,8 +255,8 @@ def event_calendar():
     except JSONDecodeError:
         new_int_events = []
     try:
-        CREATE_REGIONAL_EVENTS.update("regional_events.json")
-        new_reg_events = CREATE_REGIONAL_EVENTS.get_render_events()
+        EVENTS_RENDERER.update("regional_events.json")
+        new_reg_events = EVENTS_RENDERER.get_render_events()
         
          #i really don't know why it doesn't work with normal for
         for i, _ in enumerate(new_reg_events): 
@@ -271,8 +264,8 @@ def event_calendar():
     except JSONDecodeError:
         new_reg_events = []
     try:
-        CREATE_RUSSIAN_EVENTS.update("russian_events.json")
-        new_rus_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        EVENTS_RENDERER.update("russian_events.json")
+        new_rus_events = EVENTS_RENDERER.get_render_events()
         
          #i really don't know why it doesn't work with normal for
         for i, _ in enumerate(new_rus_events): 
