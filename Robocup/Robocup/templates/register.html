@@ -1,0 +1,45 @@
+<!-- extend from base layout -->
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Sign In</h1>
+<form action=""  method="post" name="login" enctype="multipart/form-data">
+    {{form.hidden_tag()}}
+    <p >
+        Please enter your Team name:<br>
+        {{form.TeamName(size=80, class_="form-control")}}<br>
+    </p>
+        <p>
+        Please enter your first member name:<br>
+        {{form.FirstMember(size=80, class_="form-control")}}<br>
+    </p>
+            <p>
+        Please enter your second member name:<br>
+        {{form.SecondMember(size=80, class_="form-control")}}<br>
+    </p>
+            <p>
+        Please enter your third member name:<br>
+        {{form.ThirdMember(size=80, class_="form-control")}}<br>
+    </p>
+            <p>
+        Please enter your fourth member name:<br>
+        {{form.ForthMember(size=80, class_="form-control")}}<br>
+    </p>
+            <p>
+        Please enter your mentor name:<br>
+        {{form.Mentor(size=80, class_="form-control")}}<br>
+    </p>
+    
+                <p>
+        Please select your league:<br>
+        {{form.League(class_="form-control")}}<br>
+    </p>
+    
+              <p>
+        Please upload your tdp:<br>
+        {{form.AttachFile(class_="form-control")}}<br>
+    </p>
+
+    <p><input type="submit" class = "btn btn-primary mb-2" value="Sign In"></p>
+</form>
+{% endblock %}

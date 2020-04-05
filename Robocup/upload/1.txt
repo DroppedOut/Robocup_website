@@ -1,0 +1,9 @@
++ - motor  Ì1 Ì2 SHIELD 
+Encoder(b) M1 motor - 11 pin 
+Encoder(a) M1 motor - 12 pin
+
+Encoder(b) M2 motor - 3 pin 
+Encoder(a) M2 motor - 2 pin
+Gnd shield
+5v maket
+
