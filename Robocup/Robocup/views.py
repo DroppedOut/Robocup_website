@@ -1,6 +1,7 @@
 """
 Routes and views for the flask application.
 """
+# v.01 (21 20)
 #import sqlite3
 # test comment to git
 from datetime import datetime
@@ -26,8 +27,6 @@ from event import Event
 from Robocup import app
 import database 
 import sqlite3
-import pandas as pd
-
 class LoginForm(Form):
     """ LOGIN FORM CLASS """
     TeamName = TextField('TeamName', validators=[Required()])
@@ -70,6 +69,13 @@ app.config['SECRET_KEY'] = SECRET_KEY
 @app.route('/home')
 def home():
     """Renders the home page."""
+    conn = sqlite3.connect("data.db")
+    cur = conn.cursor()
+
+    query = "INSERT INTO Admins VALUES('ADMIN','ADMIN') "
+    cur.execute(query)
+    conn.commit()
+    conn.close()
     try:
         CREATE_ALL_EVENTS.update_all("russian_events.json","regional_events.json","international_events.json")
         events = CREATE_ALL_EVENTS.get_render_events()
@@ -83,14 +89,6 @@ def home():
                            title='Home Page',
                            year=datetime.now().year,
                            event=events)
-@app.route('/download')
-def download():
-    conn = sqlite3.connect("data.db")
-    df = pd.read_sql('select * from teams', conn)
-    df.to_excel(r'result.xlsx', index=False)
-    return render_template('index.html',
-                           title='ok',
-                           year=datetime.now().year)
 
 @app.route('/contact')
 def contact():
