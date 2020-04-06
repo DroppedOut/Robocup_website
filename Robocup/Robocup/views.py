@@ -58,29 +58,33 @@ class AdminForm(Form):
     Country = TextField('Country')
     Date = DateField('Date', validators=[Required()])
     Desc = StringField(u'Text', widget=TextArea(),validators=[Required()])
+   # Пешнин дурак!(нет) ((да))
+class AdminAuth(Form):
+    """class for admin auth."""
+    Login_input = TextField('Login_input', validators=[Required()])
+    Password_input = TextField('Password_input', validators=[Required()])
+
+
+
+
 CREATE_RUSSIAN_EVENTS = RenderEvent("russian_events.json")
 CREATE_REGIONAL_EVENTS = RenderEvent("regional_events.json")
 CREATE_INTERNATIONAL_EVENTS = RenderEvent("international_events.json")
 CREATE_ALL_EVENTS = RenderEvent("russian_events.json","regional_events.json","international_events.json")
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
-
+global IS_ADMIN 
+IS_ADMIN = False
 @app.route('/')
 @app.route('/home')
 def home():
     """Renders the home page."""
-    conn = sqlite3.connect("data.db")
-    cur = conn.cursor()
 
-    query = "INSERT INTO Admins VALUES('ADMIN','ADMIN') "
-    cur.execute(query)
-    conn.commit()
-    conn.close()
     try:
         CREATE_ALL_EVENTS.update_all("russian_events.json","regional_events.json","international_events.json")
         events = CREATE_ALL_EVENTS.get_render_events()
-        print(events)
-         #i really don't know why it doesn't work with normal for
+         # print(events)
+         # i really don't know why it doesn't work with normal for
         for i, _ in enumerate(events): 
             events[i] = Markup(events[i])
     except JSONDecodeError:
@@ -105,7 +109,7 @@ def russian_events():
     try:
         CREATE_RUSSIAN_EVENTS.update("russian_events.json")
         new_events = CREATE_RUSSIAN_EVENTS.get_render_events()
-        print(new_events)
+        # print(new_events)
         # i really don't know why it doesn't work with normal for
         for i, _ in enumerate(new_events): 
             new_events[i] = Markup(new_events[i])
@@ -142,7 +146,7 @@ def international_events():
     try:
         CREATE_RUSSIAN_EVENTS.update("international_events.json")
         new_events = CREATE_RUSSIAN_EVENTS.get_render_events()
-        print(new_events)
+        # print(new_events)
  
         for i, _ in enumerate(new_events):
             new_events[i] = Markup(new_events[i])
@@ -166,6 +170,32 @@ def about():
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    form = AdminAuth()
+    if form.validate_on_submit():
+        conn = sqlite3.connect("data.db")
+        cur = conn.cursor()
+
+        cur.execute("SELECT * FROM Admins")
+ 
+        rows = cur.fetchall()
+        print(len(rows))
+
+        if rows[0][0] == form.Login_input.data and rows[0][1] == form.Password_input.data:
+            print("SUPERUSER JOINED CHAT")
+            global IS_ADMIN 
+            IS_ADMIN = True
+            return redirect('/')
+    return render_template('admin_auth.html',
+                           title='About',
+                           year=datetime.now().year,
+                           message='Your application description page.',
+                           form=form,
+                           )
+
+@app.route('/event_generator', methods=['GET', 'POST'])
+def event_generator():
+    global IS_ADMIN
+    print(IS_ADMIN)
     """Renders the about page."""
     form = AdminForm()
     new_event = Event()
@@ -176,7 +206,7 @@ def admin():
             new_event.country = 'Россия'
         else:
             new_event.country = form.Country.data
-        print(form.Status.data)
+        # print(form.Status.data)
         new_event.sity = form.Sity.data
         new_event.date = form.Date.data
         new_event.desc = form.Desc.data
@@ -200,7 +230,8 @@ def admin():
                            title='About',
                            year=datetime.now().year,
                            message='Your application description page.',
-                           form=form)
+                           form=form,
+                           ADMIN_RIGHTS = IS_ADMIN)
        
 
 
@@ -225,8 +256,7 @@ def login():
         except transliterate.exceptions.LanguageDetectionError:
             filename = form.AttachFile.data.filename
         form.AttachFile.data.save('upload/' + filename)
-        print(filename)
-        print(len(filename))
+
         team = Team(form.TeamName.data, form.FirstMember.data, form.SecondMember.data,
                     form.ThirdMember.data, form.ForthMember.data, form.Mentor.data, 
                     form.League.data)
