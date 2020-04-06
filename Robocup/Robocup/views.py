@@ -98,8 +98,6 @@ class User(UserMixin,db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 db.create_all()
-global IS_ADMIN 
-IS_ADMIN = False
 
 @app.route('/')
 @app.route('/home')
@@ -118,31 +116,6 @@ def home():
                            title='Home Page',
                            year=datetime.now().year,
                            event=events)
-
-
-"""
-test excel
-@app.route('/download')
-def download():
-    try:
-        CREATE_ALL_EVENTS.update_all("russian_events.json","regional_events.json","international_events.json")
-        events = CREATE_ALL_EVENTS.get_render_events()
-        print(events)
-
-        conn = sqlite3.connect("data.db")
-        df = pd.read_sql('select * from teams', conn)
-        df.to_excel(r'C:/Users/LIMITLESS/Desktop/result.xlsx', index=False)
-
-         #i really don't know why it doesn't work with normal for
-        for i, _ in enumerate(events): 
-            events[i] = Markup(events[i])
-    except JSONDecodeError:
-        events = []
-    return render_template('index.html',
-                           title='Home Page',
-                           year=datetime.now().year,
-                           event=events)
-"""
 
 @app.route('/contact')
 def contact():
@@ -235,8 +208,6 @@ def admin():
             login_user(user)
             print("SUPERUSER JOINED CHAT")
             
-            global IS_ADMIN 
-            IS_ADMIN = True
             return redirect('/')
     return render_template('admin_auth.html',
                            title='About',
@@ -248,8 +219,6 @@ def admin():
 @app.route('/event_generator', methods=['GET', 'POST'])
 @login_required
 def event_generator():
-    global IS_ADMIN
-    print(IS_ADMIN)
     """Renders the about page."""
     form = AdminForm()
     new_event = Event()
@@ -284,8 +253,7 @@ def event_generator():
                            title='About',
                            year=datetime.now().year,
                            message='Your application description page.',
-                           form=form,
-                           ADMIN_RIGHTS = IS_ADMIN)
+                           form=form)
        
 
 
