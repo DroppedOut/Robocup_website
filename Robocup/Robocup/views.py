@@ -299,7 +299,6 @@ def login():
         team.write()
         sender = Sender
         sender.send_letter(sender, 'upload/' + filename, team.text)
-            #team.kek()
     return render_template('register.html', 
                            title='Sign In',
                            form=form)
@@ -361,9 +360,11 @@ def event_calendar():
 def dump_truck():
     form = Dump_track_form()
     if form.validate_on_submit():
-        #а вот тут ебать пиши что тебе надо
-        #данные с формы: form.League.data pass убрать
-        pass
+        conn = sqlite3.connect("data.db")
+        df = pd.read_sql('select * from teams where league= '+str('"')+form.League.data+str('"'), conn)
+        print(form.League.data)
+        df.to_excel(r'C:/Users/LIMITLESS/Desktop/'+form.League.data+'.xlsx', index=False)
+        #Допилить, если файл пустой, то зачем качать?
     return render_template('dump_truck.html', 
                            title='Выгрузка',
                            form=form)
