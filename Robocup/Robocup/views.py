@@ -60,7 +60,7 @@ class AdminForm(Form):
     Country = TextField('Country')
     Date = DateField('Date', validators=[Required()])
     Desc = StringField(u'Text', widget=TextArea(),validators=[Required()])
-   # Пешнин дурак!(нет) ((да))
+
 class AdminAuth(Form):
     """class for admin auth."""
     Login_input = TextField('Login_input', validators=[Required()])
@@ -77,6 +77,7 @@ SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 global IS_ADMIN 
 IS_ADMIN = False
+
 @app.route('/')
 @app.route('/home')
 def home():
