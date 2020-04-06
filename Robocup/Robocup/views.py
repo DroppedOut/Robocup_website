@@ -8,6 +8,8 @@ from datetime import datetime
 from json import JSONDecodeError
 import os
 
+from flask import Flask 
+from flask_sqlalchemy import SQLAlchemy 
 from flask import Markup
 from flask import render_template, redirect
 from flask.ext.wtf import Form
@@ -18,7 +20,7 @@ from wtforms.validators import Required
 from wtforms.fields import StringField
 from wtforms.widgets import TextArea
 # from wtforms.validators import ValidationError
-
+from flask_login import LoginManager, UserMixin, login_user, login_required
 import transliterate
 from team_class import Team
 from em import Sender
@@ -83,6 +85,18 @@ CREATE_INTERNATIONAL_EVENTS = RenderEvent("international_events.json")
 CREATE_ALL_EVENTS = RenderEvent("russian_events.json","regional_events.json","international_events.json")
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///login.db'
+db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+class User(UserMixin,db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    username = db.Column(db.String(30),unique = True)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+db.create_all()
 global IS_ADMIN 
 IS_ADMIN = False
 @app.route('/')
@@ -102,6 +116,8 @@ def home():
                            title='Home Page',
                            year=datetime.now().year,
                            event=events)
+
+
 """
 test excel
 @app.route('/download')
@@ -213,7 +229,10 @@ def admin():
         print(len(rows))
 
         if rows[0][0] == form.Login_input.data and rows[0][1] == form.Password_input.data:
+            user = User.query.filter_by(username='Admin').first()  
+            login_user(user)
             print("SUPERUSER JOINED CHAT")
+            
             global IS_ADMIN 
             IS_ADMIN = True
             return redirect('/')
@@ -225,6 +244,7 @@ def admin():
                            )
 
 @app.route('/event_generator', methods=['GET', 'POST'])
+@login_required
 def event_generator():
     global IS_ADMIN
     print(IS_ADMIN)
