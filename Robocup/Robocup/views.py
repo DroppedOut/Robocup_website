@@ -27,6 +27,8 @@ from event import Event
 from Robocup import app
 import database 
 import sqlite3
+import pandas as pd
+
 class LoginForm(Form):
     """ LOGIN FORM CLASS """
     TeamName = TextField('TeamName', validators=[Required()])
@@ -79,12 +81,11 @@ IS_ADMIN = False
 @app.route('/home')
 def home():
     """Renders the home page."""
-
     try:
         CREATE_ALL_EVENTS.update_all("russian_events.json","regional_events.json","international_events.json")
         events = CREATE_ALL_EVENTS.get_render_events()
-         # print(events)
-         # i really don't know why it doesn't work with normal for
+        print(events)
+         #i really don't know why it doesn't work with normal for
         for i, _ in enumerate(events): 
             events[i] = Markup(events[i])
     except JSONDecodeError:
@@ -93,6 +94,29 @@ def home():
                            title='Home Page',
                            year=datetime.now().year,
                            event=events)
+"""
+test excel
+@app.route('/download')
+def download():
+    try:
+        CREATE_ALL_EVENTS.update_all("russian_events.json","regional_events.json","international_events.json")
+        events = CREATE_ALL_EVENTS.get_render_events()
+        print(events)
+
+        conn = sqlite3.connect("data.db")
+        df = pd.read_sql('select * from teams', conn)
+        df.to_excel(r'C:/Users/LIMITLESS/Desktop/result.xlsx', index=False)
+
+         #i really don't know why it doesn't work with normal for
+        for i, _ in enumerate(events): 
+            events[i] = Markup(events[i])
+    except JSONDecodeError:
+        events = []
+    return render_template('index.html',
+                           title='Home Page',
+                           year=datetime.now().year,
+                           event=events)
+"""
 
 @app.route('/contact')
 def contact():
@@ -322,3 +346,10 @@ def event_calendar():
                            int_events = new_int_events,
                            rus_events = new_rus_events
                            )
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('500.html'), 500
