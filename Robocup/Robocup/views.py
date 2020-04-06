@@ -380,17 +380,18 @@ def event_calendar():
 @app.route('/export_xlsx_teams', methods=['GET', 'POST'])
 def dump_teams():
     form = Dump_teams_form()
+    flag=False
     if form.validate_on_submit():
         conn = sqlite3.connect("data.db")
         df = pd.read_sql('select * from teams where league= '+str('"')+form.League.data+str('"'), conn)
-        if df.empty and 0:  #Допилить, чтоб не скачивались пустые файлы и выводилось сообщение, что файл будет пустой
-            pass
+        if df.empty:  
+            flag=True
         else:
             df.to_excel(r'Robocup/downloads/'+form.League.data+'.xlsx', index=False)
             return send_from_directory('downloads\\', form.League.data+'.xlsx',as_attachment=True)
     return render_template('export_xlsx.html', 
                            title='Выгрузка',
-                           form=form)
+                           form=form,flag=flag)
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
