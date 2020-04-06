@@ -1,7 +1,7 @@
-Team name:Keka-team
-Member 1 name:wsadfasdf
-Member 2 name:sadfasdf
-Member 3 name:Keks10
-Member 4 name:KLek
-Mentor name:Константин Коннов
-League:RobocupJuniorRescue Line
+Team name:A
+Member 1 name:che
+Member 2 name:Tebe
+Member 3 name:Nado
+Member 4 name:Kavo
+Mentor name:Madin
+League:Robocup@home

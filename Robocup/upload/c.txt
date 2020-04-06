@@ -1,0 +1,54 @@
+import os
+ 
+ 
+def get_words(filename):
+ 
+    with open(filename, encoding="utf8") as file:
+        text = file.read()
+    text = text.replace("\n", " ")
+    text = text.replace(",", "").replace(".", "").replace("?", "").replace("!", "").replace('"', "").replace("  ", "")
+    text = text.lower()
+    words = text.split()
+    words.sort()
+    return words
+ 
+ 
+def get_words_dict(words):
+    words_dict = dict()
+ 
+    for word in words:
+        if word in words_dict:
+            words_dict[word] += 1
+        else:
+            words_dict[word] = 1
+    return words_dict
+
+def get_multiple(words_dict):
+    number=0;
+    for key in words_dict:
+        if words_dict[key]>1:
+            number+=1
+    return number
+ 
+ 
+def main():
+    filename = "C:/Users/LIMITLESS/Desktop/x.txt"
+    words = get_words(filename)
+    words_dict = get_words_dict(words)
+    print("Кол-во повторяющихся слов: %d" % get_multiple(words_dict))
+    print("Все использованные слова:")
+    for word in words_dict:
+         print(word.ljust(20), words_dict[word])
+ 
+ 
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+
+https://pythonworld.ru/primery-programm/zadacha-pro-slovar.html
