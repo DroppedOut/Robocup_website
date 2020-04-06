@@ -67,7 +67,7 @@ class AdminAuth(Form):
     Login_input = TextField('Login_input', validators=[Required()])
     Password_input = TextField('Password_input', validators=[Required()])
 
-class Dump_track_form(Form):
+class Dump_teams_form(Form):
      League = SelectField('League', coerce=str, choices=[
         ('RobocupJuniorRescue Line', 'RobocupJuniorRescue Line'),
         ('RobocupJuniorRescue Maze', 'RobocupJuniorRescue Maze'),
@@ -357,16 +357,18 @@ def event_calendar():
                            rus_events = new_rus_events
                            )
 
-@app.route('/dump_truck', methods=['GET', 'POST'])
-def dump_truck():
-    form = Dump_track_form()
+@app.route('/export_xlsx_teams', methods=['GET', 'POST'])
+def dump_teams():
+    form = Dump_teams_form()
     if form.validate_on_submit():
         conn = sqlite3.connect("data.db")
         df = pd.read_sql('select * from teams where league= '+str('"')+form.League.data+str('"'), conn)
-        df.to_excel(r'Robocup/downloads/'+form.League.data+'.xlsx', index=False)
-        return send_from_directory('downloads\\', form.League.data+'.xlsx',as_attachment=True)
-        #Допилить, если файл пустой, то зачем качать?
-    return render_template('dump_truck.html', 
+        if df.empty and 0:  #Допилить, чтоб не скачивались пустые файлы и выводилось сообщение, что файл будет пустой
+            pass
+        else:
+            df.to_excel(r'Robocup/downloads/'+form.League.data+'.xlsx', index=False)
+            return send_from_directory('downloads\\', form.League.data+'.xlsx',as_attachment=True)
+    return render_template('export_xlsx.html', 
                            title='Выгрузка',
                            form=form)
 @app.errorhandler(404)
