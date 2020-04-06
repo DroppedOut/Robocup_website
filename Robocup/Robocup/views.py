@@ -1,6 +1,7 @@
 """
 Routes and views for the flask application.
 """
+# v.01 (21 20)
 #import sqlite3
 # test comment to git
 from datetime import datetime
@@ -24,7 +25,8 @@ from em import Sender
 from RenderEvents import RenderEvent
 from event import Event
 from Robocup import app
-# import database 
+import database 
+import sqlite3
 class LoginForm(Form):
     """ LOGIN FORM CLASS """
     TeamName = TextField('TeamName', validators=[Required()])
@@ -67,6 +69,13 @@ app.config['SECRET_KEY'] = SECRET_KEY
 @app.route('/home')
 def home():
     """Renders the home page."""
+    conn = sqlite3.connect("data.db")
+    cur = conn.cursor()
+
+    query = "INSERT INTO Admins VALUES('ADMIN','ADMIN') "
+    cur.execute(query)
+    conn.commit()
+    conn.close()
     try:
         CREATE_ALL_EVENTS.update_all("russian_events.json","regional_events.json","international_events.json")
         events = CREATE_ALL_EVENTS.get_render_events()
