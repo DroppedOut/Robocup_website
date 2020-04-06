@@ -14,6 +14,7 @@ from flask import Markup
 from flask import render_template, redirect
 from flask.ext.wtf import Form
 from flask_wtf.file import FileField, FileRequired
+from flask import send_from_directory
 from wtforms import TextField, SelectField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Required
@@ -62,13 +63,13 @@ class AdminForm(Form):
     Country = TextField('Country')
     Date = DateField('Date', validators=[Required()])
     Desc = StringField(u'Text', widget=TextArea(),validators=[Required()])
-   # Пешнин дурак!(нет) ((да))
+
 class AdminAuth(Form):
     """class for admin auth."""
     Login_input = TextField('Login_input', validators=[Required()])
     Password_input = TextField('Password_input', validators=[Required()])
 
-class Dump_track_form(Form):
+class Dump_teams_form(Form):
      League = SelectField('League', coerce=str, choices=[
         ('RobocupJuniorRescue Line', 'RobocupJuniorRescue Line'),
         ('RobocupJuniorRescue Maze', 'RobocupJuniorRescue Maze'),
@@ -99,6 +100,7 @@ def load_user(user_id):
 db.create_all()
 global IS_ADMIN 
 IS_ADMIN = False
+
 @app.route('/')
 @app.route('/home')
 def home():
@@ -318,7 +320,6 @@ def login():
         team.write()
         sender = Sender
         sender.send_letter(sender, 'upload/' + filename, team.text)
-            #team.kek()
     return render_template('register.html', 
                            title='Sign In',
                            form=form)
@@ -376,14 +377,18 @@ def event_calendar():
                            rus_events = new_rus_events
                            )
 
-@app.route('/dump_truck', methods=['GET', 'POST'])
-def dump_truck():
-    form = Dump_track_form()
+@app.route('/export_xlsx_teams', methods=['GET', 'POST'])
+def dump_teams():
+    form = Dump_teams_form()
     if form.validate_on_submit():
-        #а вот тут ебать пиши что тебе надо
-        #данные с формы: form.League.data pass убрать
-        pass
-    return render_template('dump_truck.html', 
+        conn = sqlite3.connect("data.db")
+        df = pd.read_sql('select * from teams where league= '+str('"')+form.League.data+str('"'), conn)
+        if df.empty and 0:  #Допилить, чтоб не скачивались пустые файлы и выводилось сообщение, что файл будет пустой
+            pass
+        else:
+            df.to_excel(r'Robocup/downloads/'+form.League.data+'.xlsx', index=False)
+            return send_from_directory('downloads\\', form.League.data+'.xlsx',as_attachment=True)
+    return render_template('export_xlsx.html', 
                            title='Выгрузка',
                            form=form)
 @app.errorhandler(404)
