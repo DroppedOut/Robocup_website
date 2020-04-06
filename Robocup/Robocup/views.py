@@ -1,7 +1,7 @@
 """
 Routes and views for the flask application.
 """
-# v.02.2 (21 13) 
+# v.02.3 (21 57) 
 #import sqlite3
 # test comment to git
 from datetime import datetime
@@ -338,8 +338,8 @@ def archive():
                            event=archive_events
                            )
 
-@app.route('/event_calendar')
 
+@app.route('/event_calendar')
 def event_calendar():
     try:
         CREATE_INTERNATIONAL_EVENTS.update("international_events.json")
@@ -377,6 +377,8 @@ def event_calendar():
                            rus_events = new_rus_events
                            )
 
+
+@login_required
 @app.route('/export_xlsx_teams', methods=['GET', 'POST'])
 def dump_teams():
     form = Dump_teams_form()
@@ -392,6 +394,12 @@ def dump_teams():
     return render_template('export_xlsx.html', 
                            title='Выгрузка',
                            form=form,flag=flag)
+@app.route('/admin_panel')
+@login_required
+def admin_panel():
+     return render_template('admin_panel.html', 
+                           title='панель управления',
+                          )
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
