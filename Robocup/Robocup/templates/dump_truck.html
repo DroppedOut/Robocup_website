@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>ВЫСЫПАТЕЛЬ 3000</h1>
+<form action=""  method="post" name="login" enctype="multipart/form-data">
+    {{form.hidden_tag()}}
+    
+                <p>
+       КУДА ВЫСЫПАТЬ???????:<br>
+        {{form.League(class_="form-control")}}<br>
+    </p>
+    
+
+
+    <p><input type="submit" class = "btn btn-primary mb-2" value="Sign In"></p>
+</form>
+{% endblock %}

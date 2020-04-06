@@ -66,7 +66,15 @@ class AdminAuth(Form):
     Login_input = TextField('Login_input', validators=[Required()])
     Password_input = TextField('Password_input', validators=[Required()])
 
-
+class Dump_track_form(Form):
+     League = SelectField('League', coerce=str, choices=[
+        ('RobocupJuniorRescue Line', 'RobocupJuniorRescue Line'),
+        ('RobocupJuniorRescue Maze', 'RobocupJuniorRescue Maze'),
+        ('RobocupJuniorRescue OnStage', 'RobocupJuniorRescue OnStage'),
+        ('RobocupJuniorRescue CoSpace', 'RobocupJuniorRescue CoSpace'),
+        ('RobocupRescue Maze', 'RobocupRescue Maze'),
+        ('Robocup@home', 'Robocup@home'),
+        ('Robocup@WorkIndustrial', 'Robocup@WorkIndustrial'),])
 
 
 CREATE_RUSSIAN_EVENTS = RenderEvent("russian_events.json")
@@ -310,6 +318,7 @@ def archive():
                            )
 
 @app.route('/event_calendar')
+
 def event_calendar():
     try:
         CREATE_INTERNATIONAL_EVENTS.update("international_events.json")
@@ -346,6 +355,17 @@ def event_calendar():
                            int_events = new_int_events,
                            rus_events = new_rus_events
                            )
+
+@app.route('/dump_truck', methods=['GET', 'POST'])
+def dump_truck():
+    form = Dump_track_form()
+    if form.validate_on_submit():
+        #а вот тут ебать пиши что тебе надо
+        #данные с формы: form.League.data pass убрать
+        pass
+    return render_template('dump_truck.html', 
+                           title='Выгрузка',
+                           form=form)
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
