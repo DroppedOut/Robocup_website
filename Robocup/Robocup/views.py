@@ -12,6 +12,7 @@ from flask import Markup
 from flask import render_template, redirect
 from flask.ext.wtf import Form
 from flask_wtf.file import FileField, FileRequired
+from flask import send_from_directory
 from wtforms import TextField, SelectField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Required
@@ -362,8 +363,8 @@ def dump_truck():
     if form.validate_on_submit():
         conn = sqlite3.connect("data.db")
         df = pd.read_sql('select * from teams where league= '+str('"')+form.League.data+str('"'), conn)
-        print(form.League.data)
-        df.to_excel(r'C:/Users/LIMITLESS/Desktop/'+form.League.data+'.xlsx', index=False)
+        df.to_excel(r'Robocup/downloads/'+form.League.data+'.xlsx', index=False)
+        return send_from_directory('downloads\\', form.League.data+'.xlsx',as_attachment=True)
         #Допилить, если файл пустой, то зачем качать?
     return render_template('dump_truck.html', 
                            title='Выгрузка',
