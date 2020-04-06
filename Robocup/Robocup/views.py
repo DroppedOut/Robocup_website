@@ -360,6 +360,44 @@ def dump_teams():
     return render_template('export_xlsx.html', 
                            title='Выгрузка',
                            form=form,flag=flag)
+"""
+@app.route('/export_xlsx_events', methods=['GET', 'POST'])
+def event_generator():
+    form = AdminForm()
+    new_event = Event()
+    if form.validate_on_submit():
+        new_event.name = form.EventName.data
+        new_event.status = form.Status.data
+        if new_event.status == 'Russian':
+            new_event.country = 'Россия'
+        else:
+            new_event.country = form.Country.data
+        # print(form.Status.data)
+        new_event.sity = form.Sity.data
+        new_event.date = form.Date.data
+        new_event.desc = form.Desc.data
+        new_event.adress = form.Adress.data
+        save_to_json = ""
+        if new_event.status == 'Russian':
+            save_to_json = "russian_events.json"
+            CREATE_RUSSIAN_EVENTS.save_new_event(new_event.make_event(),
+                                                 new_event.name, save_to_json)
+        if new_event.status == 'International':
+            save_to_json = "international_events.json" 
+            CREATE_INTERNATIONAL_EVENTS.save_new_event(new_event.make_event(),
+                                                       new_event.name, save_to_json)            
+        if new_event.status == 'Regional':
+            save_to_json = "regional_events.json"  
+            CREATE_REGIONAL_EVENTS.save_new_event(new_event.make_event(),
+                                                  new_event.name, save_to_json)
+        #events = create_events.get_render_events()
+        return redirect('/')
+    return render_template('admin.html',
+                           title='About',
+                           year=datetime.now().year,
+                           message='Your application description page.',
+                           form=form)
+"""
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
