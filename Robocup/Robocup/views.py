@@ -354,8 +354,8 @@ def event_calendar():
                            )
 
 
-@login_required
 @app.route('/export_xlsx_teams', methods=['GET', 'POST'])
+@login_required
 def dump_teams():
     form = Dump_teams_form()
     flag=False
@@ -378,7 +378,8 @@ def dump_teams():
                            title='Выгрузка',
                            form=form,flag=flag)
 
-@app.route('/e', methods=['GET', 'POST']) #/export_xlsx_events
+@app.route('/export_xlsx_events', methods=['GET', 'POST']) 
+@login_required
 def dump_events():
     form = Dump_events_Form()
     flag=False
@@ -398,6 +399,10 @@ def dump_events():
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
+
+@app.errorhandler(401)
+def not_authorized(error):
+    return redirect('/admin')
 
 @app.errorhandler(500)
 def internal_error(error):
