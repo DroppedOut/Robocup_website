@@ -261,3 +261,5 @@ __pycache__/
 *.pyc
 # All excel files
 *.xlsx
+# JSON
+*.json
