@@ -6,6 +6,7 @@ Routes and views for the flask application.
 # test comment to git
 from datetime import datetime
 from json import JSONDecodeError
+import json
 import os
 
 from flask import Flask 
@@ -47,7 +48,7 @@ class LoginForm(Form):
         ('RobocupJuniorRescue CoSpace', 'RobocupJuniorRescue CoSpace'),
         ('RobocupRescue Maze', 'RobocupRescue Maze'),
         ('Robocup@home', 'Robocup@home'),
-        ('Robocup@WorkIndustrial', 'Robocup@WorkIndustrial'),])
+        ('Robocup@WorkIndustrial', 'Robocup@WorkIndustrial')])
     AttachFile = FileField('AttachFile', validators=[FileRequired()])
 
 class AdminForm(Form):
@@ -77,8 +78,15 @@ class Dump_teams_form(Form):
         ('RobocupJuniorRescue CoSpace', 'RobocupJuniorRescue CoSpace'),
         ('RobocupRescue Maze', 'RobocupRescue Maze'),
         ('Robocup@home', 'Robocup@home'),
-        ('Robocup@WorkIndustrial', 'Robocup@WorkIndustrial'),])
+        ('Robocup@WorkIndustrial', 'Robocup@WorkIndustrial'),
+        ('*', 'Скачать все')])
 
+class Dump_events_Form(Form):
+     Rank = SelectField('Rank', coerce=str, choices=[
+        ('regional_events', 'Региональныее мероприятия'),
+        ('russian_events', 'Всероссийские мероприятия'),
+        ('international_events', 'Международные мероприятия'),
+        ('archive_events', 'Прошедшие мероприятия')])
 
 CREATE_RUSSIAN_EVENTS = RenderEvent("russian_events.json")
 CREATE_REGIONAL_EVENTS = RenderEvent("regional_events.json")
@@ -353,53 +361,40 @@ def dump_teams():
     flag=False
     if form.validate_on_submit():
         conn = sqlite3.connect("data.db")
-        df = pd.read_sql('select * from teams where league= '+str('"')+form.League.data+str('"'), conn)
+        if form.League.data !='*':
+            df = pd.read_sql('select * from teams where league= '+str('"')+form.League.data+str('"'), conn)
+        else:
+            df = pd.read_sql('select * from teams', conn)
         if df.empty:  
             flag=True
         else:
-            df.to_excel(r'Robocup/downloads/'+form.League.data+'.xlsx', index=False)
+            if form.League.data !='*':
+                df.to_excel(r'Robocup/downloads/'+form.League.data+'.xlsx', index=False)
+            else:
+                df.to_excel(r'Robocup/downloads/All.xlsx', index=False)
+                return send_from_directory('downloads\\', 'All.xlsx',as_attachment=True)
             return send_from_directory('downloads\\', form.League.data+'.xlsx',as_attachment=True)
-    return render_template('export_xlsx.html', 
+    return render_template('export_teams_xlsx.html', 
                            title='Выгрузка',
                            form=form,flag=flag)
-"""
-@app.route('/export_xlsx_events', methods=['GET', 'POST'])
-def event_generator():
-    form = AdminForm()
-    new_event = Event()
+
+@app.route('/e', methods=['GET', 'POST']) #/export_xlsx_events
+def dump_events():
+    form = Dump_events_Form()
+    flag=False
     if form.validate_on_submit():
-        new_event.name = form.EventName.data
-        new_event.status = form.Status.data
-        if new_event.status == 'Russian':
-            new_event.country = 'Россия'
+        with open(form.Rank.data+'.json') as data_file: 
+            data = json.load(data_file)
+        df = pd.DataFrame(data)
+        if df.empty:  
+            flag=True
         else:
-            new_event.country = form.Country.data
-        # print(form.Status.data)
-        new_event.sity = form.Sity.data
-        new_event.date = form.Date.data
-        new_event.desc = form.Desc.data
-        new_event.adress = form.Adress.data
-        save_to_json = ""
-        if new_event.status == 'Russian':
-            save_to_json = "russian_events.json"
-            CREATE_RUSSIAN_EVENTS.save_new_event(new_event.make_event(),
-                                                 new_event.name, save_to_json)
-        if new_event.status == 'International':
-            save_to_json = "international_events.json" 
-            CREATE_INTERNATIONAL_EVENTS.save_new_event(new_event.make_event(),
-                                                       new_event.name, save_to_json)            
-        if new_event.status == 'Regional':
-            save_to_json = "regional_events.json"  
-            CREATE_REGIONAL_EVENTS.save_new_event(new_event.make_event(),
-                                                  new_event.name, save_to_json)
-        #events = create_events.get_render_events()
-        return redirect('/')
-    return render_template('admin.html',
-                           title='About',
-                           year=datetime.now().year,
-                           message='Your application description page.',
-                           form=form)
-"""
+            df.to_excel("Robocup/downloads/"+form.Rank.data+'.xlsx')
+            return send_from_directory('downloads\\', form.Rank.data+'.xlsx',as_attachment=True)
+    return render_template('export_events_xlsx.html', 
+                           title='Выгрузка',
+                           form=form,flag=flag)
+
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
