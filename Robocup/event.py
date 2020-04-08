@@ -39,7 +39,7 @@ class onlyEvent:
                      "desc":self.desc,
                      "sity":self.sity,
                      "adress":self.adress,
-                     "date":self.date.strftime}
+                     "date":self.date.strftime("%d-%m-%Y")}
         print(self.event)
         return self.event
               
