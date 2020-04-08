@@ -378,8 +378,8 @@ def dump_teams():
                            title='Выгрузка',
                            form=form,flag=flag)
 
-@app.route('/export_xlsx_events', methods=['GET', 'POST']) 
-@login_required
+@app.route('/e', methods=['GET', 'POST']) #xport_xlsx_events
+#@login_required
 def dump_events():
     form = Dump_events_Form()
     flag=False
