@@ -1,18 +1,18 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1>ВЫСЫПАТЕЛЬ 3000</h1>
+<h1>Выгрузка команд</h1>
 <form action=""  method="post" name="login" enctype="multipart/form-data">
     {{form.hidden_tag()}}
     
                 <p>
-       КУДА ВЫСЫПАТЬ???????:<br>
+       Выберите лигу для выгрузки<br>
         {{form.League(class_="form-control")}}<br>
     </p>
     
 {%if flag%}
     <script>
-    alert("peshnin pidor dirty")
+    alert("Нет команд в такой лиге!")
     </script>
 
     {%endif%}
