@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>ВЫСЫПАТЕЛЬ 9000</h1>
+<form action=""  method="post" name="login" enctype="multipart/form-data">
+    {{form.hidden_tag()}}
+    
+                <p>
+       КУДА ВЫСЫПАТЬ???????:<br>
+        {{form.Rank(class_="form-control")}}<br>
+    </p>
+    
+{%if flag%}
+    <script>
+    alert("В этой категории пока нет мероприятий")
+    </script>
+    {%endif%}
+
+    <p><input type="submit" class = "btn btn-primary mb-2" value="Sign In"></p>
+</form>
+{% endblock %}

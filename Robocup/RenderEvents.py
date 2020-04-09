@@ -3,7 +3,8 @@ import io
 import random
 from collections import OrderedDict
 from datetime import datetime
-#import os
+import os.path
+
 class RenderEvent:
 
     def __init__(self, json_file1,json_file2=".",json_file3="."):
@@ -11,6 +12,12 @@ class RenderEvent:
         self.render_events = []
         self.data = {}
         if json_file2==".":
+            if not os.path.exists(json_file1):
+                with open(json_file1, "w",encoding='utf-8') as file:
+                        json.dump(self.data,file)
+            if not os.path.exists("archive_events.json"):
+                with open("archive_events.json", "w",encoding='utf-8') as file:
+                        json.dump(self.data,file)
             with open(json_file1, "r", encoding='utf-8') as read_file:
                 try:
                     self.update_all(json_file1,json_file2,json_file3)
@@ -18,7 +25,23 @@ class RenderEvent:
                     self.data = {}
                     print("feels bad man")
         else:
-            self.update(json_file1)
+            if not os.path.exists(json_file1):
+                with open(json_file1, "w",encoding='utf-8') as file:
+                        json.dump(self.data,file)
+            if not os.path.exists(json_file2):
+                with open(json_file2, "w",encoding='utf-8') as file:
+                        json.dump(self.data,file)
+            if not os.path.exists(json_file3):
+                with open(json_file3, "w",encoding='utf-8') as file:
+                        json.dump(self.data,file)
+            if not os.path.exists("archive_events.json"):
+                with open("archive_events.json", "w",encoding='utf-8') as file:
+                        json.dump(self.data,file)
+            try:
+                self.update(json_file1)
+            except:
+                self.data = {}
+                print("feels bad man")
 
     def update(self, json_file):
 
