@@ -52,7 +52,7 @@ class RenderEvent:
         with open(json_file, "r",encoding='utf-8') as read_file:
             self.data = json.load(read_file)
             sorted_events = OrderedDict(self.data)
-            self.data = dict(OrderedDict(sorted(sorted_events.items(), key=lambda t: int(t[1]["date"][15:17])+int(t[1]["date"][18:20])*30+int(t[1]["date"][21:25])*365)))
+            self.data = dict(OrderedDict(sorted(sorted_events.items(), key=lambda t: int(t[1]["date"][0:2])+int(t[1]["date"][3:5])*30+int(t[1]["date"][6:10])*365)))
             #sort 
             #print(self.data)
             index = -1
@@ -60,8 +60,18 @@ class RenderEvent:
                print (self.data[key]['date'])        
                index+=1
                self.events.append([])
-               for k in self.data[key]:
-                    self.events[index].append(str(self.data[key][k]))
+               #for k in self.data[key]:
+               self.events[index].append("<h2> " + str(self.data[key]['name']) + "<br><strong> " \
+                     + str(self.data[key]['status']) + "</strong></h2>")
+               self.events[index].append('<p> <li style="list-style-type: none;" > \
+                     <a href="#" class="" style="padding: 0px" data-toggle="dropdown" role="button" \
+                     aria-haspopup="true" aria-expanded="false"><strong>Инфо</strong> \
+                     <span class="caret"></span></a> <ul class="dropdown-menu"> \
+                  <li>'+ str(self.data[key]['desc']) +'</li></ul> </li>')
+               self.events[index].append('<strong> Страна: </strong>' + str(self.data[key]['country']) + "<br>")
+               self.events[index].append("<p> <strong> Город: </strong>" + str(self.data[key]['city']) + "<br>")
+               self.events[index].append("<strong>Адрес: </strong>" + str(self.data[key]['adress']) + "<br>")
+               self.events[index].append("<strong> Дата: " + str(self.data[key]['date']) + "</strong></p>")
                     
             for i in range(len(self.events)):
                 self.render_events.append("".join(self.events[i]))
@@ -84,7 +94,7 @@ class RenderEvent:
             data_old = json.load(file)
         sortkey=datetime.now().year*365+datetime.now().month*30+datetime.now().day
         for key in list(data_all.keys()):
-            dt = int(data_all[key]["date"][15:17])+int(data_all[key]["date"][18:20])*30+int(data_all[key]["date"][21:25])*365
+            dt = int(data_all[key]["date"][0:2])+int(data_all[key]["date"][3:5])*30+int(data_all[key]["date"][6:10])*365
             if dt<sortkey:
                 with open("archive_events.json", "w", encoding="utf-8") as file:
                     data_old[key] = data_all[key]
@@ -108,16 +118,27 @@ class RenderEvent:
             self.data = dict(list(json.load(read_file3).items())+list(self.data.items()))
         sortkey=datetime.now().year*365+datetime.now().month*30+datetime.now().day
         sorted_events = OrderedDict(self.data)
-        self.data = dict(OrderedDict(sorted(sorted_events.items(), key=lambda t: int(t[1]["date"][15:17])+int(t[1]["date"][18:20])*30+int(t[1]["date"][21:25])*365-sortkey)))
+        self.data = dict(OrderedDict(sorted(sorted_events.items(), key=lambda t: int(t[1]["date"][0:2])+int(t[1]["date"][3:5])*30+int(t[1]["date"][6:10])*365-sortkey)))
         #sort 
         index = -1
         for key in list(self.data.keys()):
-            dt = int(self.data[key]["date"][15:17])+int(self.data[key]["date"][18:20])*30+int(self.data[key]["date"][21:25])*365
+            dt = int(self.data[key]["date"][0:2])+int(self.data[key]["date"][3:5])*30+int(self.data[key]["date"][6:10])*365
             index+=1
             self.events.append([])
 
-            for k in self.data[key]:
-                    self.events[index].append(str(self.data[key][k]))
+            #for k in self.data[key]:
+                    #self.events[index].append(str(self.data[key][k]))
+            self.events[index].append("<h2> " + str(self.data[key]['name']) + "<br><strong> " \
+                     + str(self.data[key]['status']) + "</strong></h2>")
+            self.events[index].append('<p> <li style="list-style-type: none;" > \
+                     <a href="#" class="" style="padding: 0px" data-toggle="dropdown" role="button" \
+                     aria-haspopup="true" aria-expanded="false"><strong>Инфо</strong> \
+                     <span class="caret"></span></a> <ul class="dropdown-menu"> \
+                  <li>'+ str(self.data[key]['desc']) +'</li></ul> </li>')
+            self.events[index].append('<strong> Страна: </strong>' + str(self.data[key]['country']) + "<br>")
+            self.events[index].append("<p> <strong> Город: </strong>" + str(self.data[key]['city']) + "<br>")
+            self.events[index].append("<strong>Адрес: </strong>" + str(self.data[key]['adress']) + "<br>")
+            self.events[index].append("<strong> Дата: " + str(self.data[key]['date']) + "</strong></p>")
                     
         for i in range(len(self.events)):
             self.render_events.append("".join(self.events[i]))

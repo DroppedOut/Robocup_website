@@ -27,7 +27,7 @@ import transliterate
 from team_class import Team
 from em import Sender
 from RenderEvents import RenderEvent
-from event import Event, onlyEvent #FIX IT
+from event import Event
 from Robocup import app
 import database 
 import sqlite3
@@ -59,7 +59,7 @@ class AdminForm(Form):
         ('Russian', 'Всероссийское'),
         ('International', 'Международное'),
         ])
-    Sity = TextField('Sity', validators=[Required()])
+    City = TextField('City', validators=[Required()])
     Adress = TextField('Addr', validators=[Required()])
     Country = TextField('Country')
     Date = DateField('Date', validators=[Required()])
@@ -85,15 +85,12 @@ class Dump_events_Form(Form):
      Rank = SelectField('Rank', coerce=str, choices=[
         ('regional_events', 'Региональныее мероприятия'),
         ('russian_events', 'Всероссийские мероприятия'),
-        ('international_events', 'Международные мероприятия')])
+        ('international_events', 'Международные мероприятия'),
+        ('archive_events', 'Прошедшие мероприятия')])
 
 CREATE_RUSSIAN_EVENTS = RenderEvent("russian_events.json")
 CREATE_REGIONAL_EVENTS = RenderEvent("regional_events.json")
 CREATE_INTERNATIONAL_EVENTS = RenderEvent("international_events.json")
-#FIX IT
-CREATE_RUSSIAN_EVENTS_CLEAN = RenderEvent("robocup_russian_events.json")
-CREATE_REGIONAL_EVENTS_CLEAN = RenderEvent("robocup_regional_events.json")
-CREATE_INTERNATIONAL_EVENTS_CLEAN = RenderEvent("robocup_international_events.json")
 
 CREATE_ALL_EVENTS = RenderEvent("russian_events.json","regional_events.json","international_events.json")
 SECRET_KEY = os.urandom(32)
@@ -235,58 +232,36 @@ def event_generator():
     form = AdminForm()
     new_event = Event()
 
-    clean_event = onlyEvent() #FIX IT
 
     if form.validate_on_submit():
-
-        clean_event.name = form.EventName.data #FIX IT
-        clean_event.status = form.Status.data #FIX IT
 
         new_event.name = form.EventName.data
         new_event.status = form.Status.data
         if new_event.status == 'Russian':
             new_event.country = 'Россия'
 
-            clean_event.country = 'Россия' #FIX IT
-
         else:
             new_event.country = form.Country.data
 
-            clean_event.country = form.Country.data #FIX IT
-
         # print(form.Status.data)
-        new_event.sity = form.Sity.data
+        new_event.city = form.City.data
         new_event.date = form.Date.data
         new_event.desc = form.Desc.data
         new_event.adress = form.Adress.data
-
-        clean_event.sity = form.Sity.data #FIX IT
-        clean_event.date = form.Date.data #FIX IT
-        clean_event.desc = form.Desc.data #FIX IT
-        clean_event.adress = form.Adress.data #FIX IT
 
         save_to_json = ""
         if new_event.status == 'Russian':
             save_to_json = "russian_events.json"
             CREATE_RUSSIAN_EVENTS.save_new_event(new_event.make_event(),
                                                  new_event.name, save_to_json)
-            #FIX IT
-            CREATE_RUSSIAN_EVENTS_CLEAN.save_new_event( clean_event.make_event(),
-                                                  clean_event.name, 'robocup_russian_events.json')
         if new_event.status == 'International':
             save_to_json = "international_events.json" 
             CREATE_INTERNATIONAL_EVENTS.save_new_event(new_event.make_event(),
                                                        new_event.name, save_to_json)
-            #FIX IT
-            CREATE_INTERNATIONAL_EVENTS_CLEAN.save_new_event( clean_event.make_event(),
-                                                  clean_event.name, 'robocup_international_events.json')
         if new_event.status == 'Regional':
             save_to_json = "regional_events.json"  
             CREATE_REGIONAL_EVENTS.save_new_event(new_event.make_event(),
                                                   new_event.name, save_to_json)
-            #FIX IT
-            CREATE_REGIONAL_EVENTS_CLEAN.save_new_event( clean_event.make_event(),
-                                                  clean_event.name, 'robocup_regional_events.json')
         #events = create_events.get_render_events()
         return redirect('/')
     return render_template('admin.html',
@@ -416,7 +391,7 @@ def dump_events():
     form = Dump_events_Form()
     flag=False
     if form.validate_on_submit():
-        with open('robocup_'+form.Rank.data+'.json') as data_file: 
+        with open(form.Rank.data+'.json') as data_file: 
             data = json.load(data_file)
         df = pd.DataFrame(data)
         if df.empty:  

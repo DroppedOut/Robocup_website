@@ -263,3 +263,7 @@ __pycache__/
 *.xlsx
 # JSON
 *.json
+# Database
+*.db
+# Trash
+*.txt
