@@ -1,7 +1,7 @@
-Team name:Team1
-Member 1 name:member1
-Member 2 name:Member2
-Member 3 name:Member3
-Member 4 name:Member4
-Mentor name:Mentor
-League:RobocupJuniorRescue OnStage
+Team name:Keka-team
+Member 1 name:Madin
+Member 2 name:Dima
+Member 3 name:Artem
+Member 4 name:
+Mentor name:Larisa
+League:RobocupJuniorRescue Maze

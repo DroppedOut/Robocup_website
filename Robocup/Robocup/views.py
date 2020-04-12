@@ -427,6 +427,11 @@ def dump_events():
     return render_template('export_events_xlsx.html', 
                            title='Выгрузка',
                            form=form,flag=flag)
+@app.route('/humanoid')
+def humanoid():
+    return render_template('humanoid.html', 
+                           title='Humanoid league'
+                           ) 
 
 @app.errorhandler(404)
 def not_found_error(error):
