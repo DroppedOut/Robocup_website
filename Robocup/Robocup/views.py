@@ -85,7 +85,8 @@ class Dump_events_Form(Form):
      Rank = SelectField('Rank', coerce=str, choices=[
         ('regional_events', 'Региональныее мероприятия'),
         ('russian_events', 'Всероссийские мероприятия'),
-        ('international_events', 'Международные мероприятия')])
+        ('international_events', 'Международные мероприятия'),
+        ('archive_events', 'Прошедшие мероприятия')])
 
 CREATE_RUSSIAN_EVENTS = RenderEvent("russian_events.json")
 CREATE_REGIONAL_EVENTS = RenderEvent("regional_events.json")
