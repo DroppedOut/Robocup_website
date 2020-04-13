@@ -317,6 +317,7 @@ def login():
         #send qr
         sender.send_qr(sender, qr_code_fn, form.Email.data, "Registration qr code" )
         sender.send_letter(sender, 'upload/' + filename, team.text)
+        return redirect('/')
     return render_template('register.html', 
                            title='Sign In',
                            form=form)

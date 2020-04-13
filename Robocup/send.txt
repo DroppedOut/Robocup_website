@@ -1,7 +1,7 @@
-Team name:sadasd
-Member 1 name:asdasd
-Member 2 name:sadfasdf
-Member 3 name:Keks10
-Member 4 name:asdasd
-Mentor name:ice dalek
-League:RobocupJuniorRescue Line
+Team name:Peshnin
+Member 1 name:Sin
+Member 2 name:Sobaki
+Member 3 name:Sutuloi
+Member 4 name:Dealat Manipulator
+Mentor name:Madina privet!!!
+League:Robocup@home
