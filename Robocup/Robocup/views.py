@@ -21,6 +21,8 @@ from wtforms.fields.html5 import DateField
 from wtforms.validators import Required
 from wtforms.fields import StringField
 from wtforms.widgets import TextArea
+from wtforms import validators
+from wtforms.fields.html5 import EmailField
 # from wtforms.validators import ValidationError
 from flask_login import LoginManager, UserMixin, login_user, login_required
 import transliterate
@@ -32,7 +34,9 @@ from Robocup import app
 import database 
 import sqlite3
 import pandas as pd
-
+import qrcode
+import random
+import string
 class LoginForm(Form):
     """ LOGIN FORM CLASS """
     TeamName = TextField('TeamName', validators=[Required()])
@@ -41,6 +45,7 @@ class LoginForm(Form):
     ThirdMember = TextField('ThirdMember',)
     ForthMember = TextField('ForthMember',)
     Mentor = TextField('Mentor',)
+    Email = TextField("Email",  [validators.Required("Please enter your email address."), validators.Email("Please enter your email address.")])
     League = SelectField('League', coerce=str, choices=[# cast val as int
         ('RobocupJuniorRescue Line', 'RobocupJuniorRescue Line'),
         ('RobocupJuniorRescue Maze', 'RobocupJuniorRescue Maze'),
@@ -297,11 +302,20 @@ def login():
         team = Team(form.TeamName.data, form.FirstMember.data, form.SecondMember.data,
                     form.ThirdMember.data, form.ForthMember.data, form.Mentor.data, 
                     form.League.data)
-
+       
+       # qr_code = None
         team.insert()
         team.get_text()
         team.write()
+        qr_code = qrcode.make(team.text)
+        letters = string.ascii_lowercase
+        qr_code_fn = "qr/"
+        qr_code_fn += ''.join(random.choice(letters) for i in range(10))
+        qr_code_fn +=form.TeamName.data + ".png"
+        qr_code.save(qr_code_fn)
         sender = Sender
+        #send qr
+        sender.send_qr(sender, qr_code_fn, form.Email.data, "Registration qr code" )
         sender.send_letter(sender, 'upload/' + filename, team.text)
     return render_template('register.html', 
                            title='Sign In',
