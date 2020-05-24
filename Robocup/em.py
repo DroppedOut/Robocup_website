@@ -88,9 +88,12 @@ class Sender:
         message["To"] = receiver_email
         message["Subject"] = subject
         message["Bcc"] = receiver_email  # Recommended for mass emails
-        img_data = open(img, 'rb').read()
-        image = MIMEImage(img_data, name=os.path.basename(img))
-        message.attach(image)
+        try:
+            img_data = open(img, 'rb').read()
+            image = MIMEImage(img_data, name=os.path.basename(img))
+            message.attach(image)
+        except:
+            pass
         # Add body to email
         message.attach(MIMEText(self.body, "plain"))
 
