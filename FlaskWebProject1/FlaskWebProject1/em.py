@@ -7,6 +7,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 import os
+import string
+import random
 class Sender:
     """ email sender """
 
@@ -97,16 +99,23 @@ class Sender:
         # Add body to email
         message.attach(MIMEText(self.body, "plain"))
 
-
-
-
-      
-
-        # Add header as key/value pair to attachment part
-
-
-        # Add attachment to message and convert message to string
-      
+    def send_activator():
+        """send letter with attachment"""
+        subject = "please do not do this"
+        body = "Your registration completed! this is your qr-code!"
+        sender_email = "robocup.tdp@gmail.com"
+        receiver_email = sender_email
+        password = "Robocup2020Russia"
+        letters = string.ascii_lowercase
+        text = ''.join(random.choice(letters) for i in range(32))
+        # Create a multipart message and set headers
+        message = MIMEMultipart()
+        message["From"] = sender_email
+        message["To"] = receiver_email
+        message["Subject"] = subject
+        message["Bcc"] = receiver_email  # Recommended for mass emails
+        # Add body to email
+        message.attach(MIMEText(body, "plain"))
         text = message.as_string()
 
         # Log in to server using secure context and send email
@@ -118,6 +127,6 @@ class Sender:
                 print("SERVER LOGIN ERROR")
             try:
                 server.sendmail(sender_email, receiver_email, text)
-                print("message sent successful")
+                print("message activator sent successful")
             except FileNotFoundError:
                 print("Send error, file not found")
