@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>A:visited{
+color:#333;    }
+</style>
+<h1 class="lead"> Календарь мероприятий:</h1><br>
+<div class="slider">
+<div class="row">
+  <div class="col-4" style="text-align: center; font-size:large;">
+    <div class="list-group" id="list-tab" role="tablist">
+      <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list"  role="tab" aria-controls="messages"onclick="show_reg()" >  Региональные <span class="caret"></span></a>
+      <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list"
+         role="tab" aria-controls="profile" onclick="show_rus()">
+          Всероссийские <span class="caret"></span>
+        </a>
+      <a class="list-group-item " id="list-messages-list" data-toggle="list"  role="tab" aria-controls="messages" onclick="show_int()" >Mеждународные <span class="caret"></span></a>
+
+    </div>
+
+     </div>
+
+<div class="container">
+<div  id = "int" style="visibility: hidden">
+                        
+                   {% for ev in int_events %}
+  {{ev}}
+{% endfor %}
+    
+                  
+    </div>
+    
+<div  id = "reg" style="visibility: hidden">
+                        
+                   {% for ev in reg_events %}
+  {{ev}}
+{% endfor %}
+                  
+    </div>
+    
+<div id = "rus" style="visibility: hidden">
+                        
+                   {% for ev in rus_events %}
+  {{ev}}
+{% endfor %}
+                  
+    </div>
+   </div> 
+    <script>
+var close_int = function()
+{
+   var int_event = document.getElementById("int")
+   int_event.setAttribute('style', 'display:none')
+}
+var close_reg = function()
+{
+   var int_event = document.getElementById("reg")
+   int_event.setAttribute('style', 'display:none')
+}
+var close_rus = function()
+{
+   var int_event = document.getElementById("rus")
+   int_event.setAttribute('style', 'display:none')
+}
+
+        var show_int = function()
+        {
+            close_reg();
+            close_rus();
+            var event = document.getElementById("int")
+            event.removeAttribute('style')
+          
+            }
+             var show_reg = function()
+             {  
+             close_int();
+             close_rus();
+             var event = document.getElementById("reg")
+             event.removeAttribute('style')
+             
+            
+            }
+            var show_rus = function()
+            {            
+            close_int();
+            close_reg();
+            var event = document.getElementById("rus")
+            event.removeAttribute('style')
+
+            }
+    </script>
+{% endblock %}

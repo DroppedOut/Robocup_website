@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>A:visited{
+color:#333;    }
+</style>
+<h1 class="lead"> Календарь мероприятий:</h1><br>
+<div class="slider">
+<div class="row">
+  <div class="col-4" style="text-align: center; font-size:large;">
+    <div class="list-group" id="list-tab" role="tablist">
+      <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list"  role="tab" aria-controls="messages" >  Выгрузить мероприятия<span class="caret"></span></a>
+      <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list"
+         role="tab" aria-controls="profile" href="/export_xlsx_teams" >
+         Выгурзить команды <span class="caret"></span>
+        </a>
+      <a class="list-group-item " href="/event_generator" id="list-messages-list" data-toggle="list"  role="tab" aria-controls="messages" >Добавить мероприятия <span class="caret"></span></a>
+
+    </div>
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Выгрузка команд</h1>
+<form action=""  method="post" name="login" enctype="multipart/form-data">
+    {{form.hidden_tag()}}
+    
+                <p>
+       Выберите лигу для выгрузки<br>
+        {{form.League(class_="form-control")}}<br>
+    </p>
+    
+{%if flag%}
+    <script>
+    alert("Нет команд в такой лиге!")
+    </script>
+
+    {%endif%}
+
+    <p><input type="submit" class = "btn btn-primary mb-2" value="Sign In"></p>
+</form>
+{% endblock %}

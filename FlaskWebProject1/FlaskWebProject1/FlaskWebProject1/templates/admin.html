@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  
+<h1>Добавление мероприятий</h1>
+
+<form action=""  method="post" name="login" enctype="multipart/form-data">
+    {{form.hidden_tag()}}
+
+    <p >
+       Введите название мероприятия<br>
+        {{form.EventName(size=80, class_="form-control")}}<br>
+    </p>
+        <p>
+       Выберете статус мероприятия:<br>
+        {{form.Status (class_="form-control")}}<br>
+    </p>
+            <p>
+        Введите город в котором будет проводится мероприятие:<br>
+        {{form.City(size=80, class_="form-control")}}<br>
+    </p>
+                <p>
+        Введите адрес мероприятия:<br>
+        {{form.Adress(size=80, class_="form-control")}}<br>
+    </p>
+         
+            <p>
+        Введите информацию о мероприятии<br>
+        {{form.Desc(size=200, class_="form-control")}}<br>
+    </p>
+            <p>
+        Страну, в которой будет проходить мероприяти<br>
+        (для международных)        
+         
+        {{form.Country(size=80, class_="form-control")}}<br>
+    </p>
+            <p>
+        Введите дату мероприятия:<br>
+        {{form.Date(size=80, class_="form-control")}}<br>
+    </p>
+    
+
+    <p><input type="submit" class = "btn btn-primary mb-2" value="Sign In"></p>
+</form>
+ 
+{% endblock %}

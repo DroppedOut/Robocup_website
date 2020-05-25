@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Авторизация</h1>
+<div class="slider">
+<form action=""  method="post" name="login" enctype="multipart/form-data">
+    {{form.hidden_tag()}}
+    
+    <p >
+       Введите логин<br>
+        {{form.Login_input(size=80, class_="form-control")}}<br>
+    </p>
+
+            <p>
+        Введите пароль:<br>
+        {{form.Password_input(size=80, class_="form-control")}}<br>
+    </p>
+
+    
+
+    <p><input type="submit" class = "btn btn-primary mb-2" value="Sign In"></p>
+</form>
+</div>
+{% endblock %}

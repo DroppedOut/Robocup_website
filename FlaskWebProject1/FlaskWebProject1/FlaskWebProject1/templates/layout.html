@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - My Flask Application</title>
+    <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
+    <link rel="stylesheet" type="text/css" href="/static/content/slider.css" />
+    <script src="/static/scripts/modernizr-2.6.2.js"></script>
+  <style type="text/css">
+
+   A {
+    color: black; /* Цвет ссылок */
+   }
+   A:visited {
+    color: #cecece; /* Цвет посещенных ссылок */
+   }
+   A:active {
+    color: #ffff00; /* Цвет активных ссылок */
+   }
+      A:hover{
+          cursor: pointer;
+      }
+      Strong{
+          color: #333;
+      }
+
+  </style>
+</head>
+
+<body>
+  
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                  <a href="/" class="navbar-brand">Robocup Russia</a>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                
+              
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/event_calendar">Мероприятия</a></li>
+                    	<li><a href="{{ url_for('archive') }}">Прошедшие мероприятия</a></li>
+                                        <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Лиги <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                  <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">RoboCup Soccer</th>
+      <th scope="col">RoboCup Rescue</th>
+      <th scope="col">RoboCup Home</th>
+      <th scope="col">RoboCup Industrial</th>
+      <th scope="col">RoboCup Junior</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a>Humanoid</a></td>
+      <td><a>Robot</a></td>
+      <td><a>Open Platform</a></td>
+      <td><a>RoboCup <br>@Work</a></td>
+        <td><a>Soccer</a></td>
+    </tr>
+    <tr>
+      <td ><a>Standart Platform</a></td>
+      <td><li><a>Simulation</a></li></td>
+      <td><a>Domestic Standart Platform</a></td>
+      <td><a>Logistics</a></td>
+        <td><a>OnStage</a></td>
+    </tr>
+    <tr>
+      <td ><a>Middle Size</a></td>
+      <td><li role="separator" class="divider"></li></td>
+      <td> <li><a href="#">Social Standart Platform</a></li></td>
+      <td><li ><a>Rescue</a></li></td>
+        <td><li role="separator" class="divider"></li></td>
+    </tr>
+
+        <tr>
+      <td ><a>Small Size</a></td>
+      <td><li role="separator" class="divider"></li></td>
+      <td><li role="separator" class="divider"></li></td>
+      <td><li role="separator" class="divider"></li></td>
+             <td><li role="separator" class="divider"></li></td>
+    </tr>
+        <tr>
+      <td ><a class = "stretched-link">Simulation</a></td>
+      <td><li role="separator" class="divider"></li></td>
+       <td><li role="separator" class="divider"></li></td>
+      <td><li role="separator" class="divider"></li></td>
+             <td><li role="separator" class="divider"></li></td>
+    </tr>
+      
+  </tbody>
+</table>
+
+               
+                
+               
+                
+                
+              </ul>
+            </li>
+                    <li><a href="{{ url_for('about') }}">О нас</a></li>
+				
+
+                    <li><a href="{{ url_for('contact') }}">Контакты</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    
+    
+    
+    <div class="container body-content">
+        {% block content %}{% endblock %}
+        <hr />
+        <footer>
+            <p>&copy; {{ year }} - My Flask Application</p>
+        </footer>
+    </div>
+
+    <script src="/static/scripts/jquery-1.10.2.js"></script>
+    <script src="/static/scripts/bootstrap.js"></script>
+    <script src="/static/scripts/respond.js"></script>
+    {% block scripts %}{% endblock %}
+
+</body>
+</html>
