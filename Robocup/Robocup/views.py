@@ -155,7 +155,7 @@ def russian_events():
                            event=new_events)
      
 @app.route('/regional_events')
-def regioanl_events():
+def regional_events():
     """Renders the about page."""
     try:
         CREATE_ALL_EVENTS.update("events.json",'Regional')
@@ -218,7 +218,7 @@ def admin():
             login_user(user)
             print("SUPERUSER JOINED CHAT")
             
-            return redirect('/')
+            return redirect('/admin_panel')
     return render_template('admin_auth.html',
                            title='About',
                            year=datetime.now().year,
@@ -260,6 +260,47 @@ def event_generator():
                            message='Your application description page.',
                            form=form)
        
+@app.route('/event_fix/<name>', methods=['GET', 'POST'])
+@login_required
+def event_fix(name=None):
+    """Renders the about page."""
+    form = AdminForm()
+    new_event = Event()
+
+
+    if form.validate_on_submit():
+
+        new_event.name = form.EventName.data
+        new_event.status = form.Status.data
+        if new_event.status == 'Russian':
+            new_event.country = 'Россия'
+
+        else:
+            new_event.country = form.Country.data
+
+        # print(form.Status.data)
+        new_event.city = form.City.data
+        new_event.date = form.Date.data
+        new_event.desc = form.Desc.data
+        new_event.adress = form.Adress.data
+
+        save_to_json = "events.json"
+        CREATE_ALL_EVENTS.update_event(new_event.make_event(),
+                                                 name, save_to_json)
+        return redirect('/')
+    event = CREATE_ALL_EVENTS.get_existing_event(name,"events.json")
+    form.EventName.data=event['name']
+    form.Status.data=event['status']
+    form.Country.data=event['country']
+    form.City.data=event['city']
+    form.Desc.data = event['desc']
+    form.Adress.data=event['adress']
+    #form.Date.data=event['date'] //FUCK STRING DATES
+    return render_template('admin.html',
+                           title='About',
+                           year=datetime.now().year,
+                           message='Your application description page.',
+                           form=form)
 
 
 @app.route('/error')
@@ -360,6 +401,44 @@ def event_calendar():
                            rus_events = new_rus_events
                            )
 
+@app.route('/admin_event_calendar')
+@login_required
+def admin_event_calendar():
+    try:
+        CREATE_ALL_EVENTS.admin_update("events.json",'International')
+        new_int_events = CREATE_ALL_EVENTS.get_render_events()
+       
+         #i really don't know why it doesn't work with normal for
+        for i, _ in enumerate(new_int_events): 
+            new_int_events[i] = Markup(new_int_events[i])
+    except JSONDecodeError:
+        new_int_events = []
+    try:
+        CREATE_ALL_EVENTS.admin_update("events.json",'Regional')
+        new_reg_events = CREATE_ALL_EVENTS.get_render_events()
+        
+         #i really don't know why it doesn't work with normal for
+        for i, _ in enumerate(new_reg_events): 
+            new_reg_events[i] = Markup(new_reg_events[i])
+    except JSONDecodeError:
+        new_reg_events = []
+    try:
+        CREATE_ALL_EVENTS.admin_update("events.json",'Russian')
+        new_rus_events = CREATE_ALL_EVENTS.get_render_events()
+        
+         #i really don't know why it doesn't work with normal for
+        for i, _ in enumerate(new_rus_events): 
+            new_rus_events[i] = Markup(new_rus_events[i])
+    except JSONDecodeError:
+        new_rus_events = []
+    return render_template('event_calendar.html',
+                           title='Error',
+                           year=datetime.now().year,
+                           message='Dead.',
+                           reg_events = new_reg_events,
+                           int_events = new_int_events,
+                           rus_events = new_rus_events
+                           )
 
 @app.route('/export_xlsx_teams', methods=['GET', 'POST'])
 @login_required
@@ -423,11 +502,9 @@ def not_authorized(error):
 def internal_error(error):
     return render_template('500.html'), 500
 
-"""
-@application.route('/admin_panel')
+@app.route('/admin_panel')
 @login_required
 def admin_panel():
     return render_template('admin_panel.html', 
         title='Admin panel'
                           )
-"""
