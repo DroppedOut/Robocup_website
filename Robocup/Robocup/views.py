@@ -3,7 +3,6 @@ Routes and views for the flask application.
 """
 # v.02.3 (21 57) 
 #import sqlite3
-# test comment to git
 from datetime import datetime
 from json import JSONDecodeError
 import json
@@ -93,11 +92,8 @@ class Dump_events_Form(Form):
         ('international_events', 'Международные мероприятия'),
         ('archive_events', 'Прошедшие мероприятия')])
 
-CREATE_RUSSIAN_EVENTS = RenderEvent("russian_events.json")
-CREATE_REGIONAL_EVENTS = RenderEvent("regional_events.json")
-CREATE_INTERNATIONAL_EVENTS = RenderEvent("international_events.json")
 
-CREATE_ALL_EVENTS = RenderEvent("russian_events.json","regional_events.json","international_events.json")
+CREATE_ALL_EVENTS = RenderEvent("events.json")
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///login.db'
@@ -118,7 +114,7 @@ db.create_all()
 def home():
     """Renders the home page."""
     try:
-        CREATE_ALL_EVENTS.update_all("russian_events.json","regional_events.json","international_events.json")
+        CREATE_ALL_EVENTS.update("events.json",'*')
         events = CREATE_ALL_EVENTS.get_render_events()
         print(events)
          #i really don't know why it doesn't work with normal for
@@ -144,8 +140,8 @@ def contact():
 def russian_events():
     """Renders the about page."""
     try:
-        CREATE_RUSSIAN_EVENTS.update("russian_events.json")
-        new_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        CREATE_ALL_EVENTS.update("events.json",'Russian')
+        new_events =  CREATE_ALL_EVENTS.get_render_events()
         # print(new_events)
         # i really don't know why it doesn't work with normal for
         for i, _ in enumerate(new_events): 
@@ -162,8 +158,8 @@ def russian_events():
 def regioanl_events():
     """Renders the about page."""
     try:
-        CREATE_RUSSIAN_EVENTS.update("regional_events.json")
-        new_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        CREATE_ALL_EVENTS.update("events.json",'Regional')
+        new_events =  CREATE_ALL_EVENTS.get_render_events()
        # print (new_events)
  
         for i, _ in enumerate(new_events):
@@ -181,8 +177,8 @@ def regioanl_events():
 def international_events():
     """Renders the about page."""
     try:
-        CREATE_RUSSIAN_EVENTS.update("international_events.json")
-        new_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        CREATE_ALL_EVENTS.update("events.json",'International')
+        new_events =  CREATE_ALL_EVENTS.get_render_events()
         # print(new_events)
  
         for i, _ in enumerate(new_events):
@@ -254,20 +250,9 @@ def event_generator():
         new_event.desc = form.Desc.data
         new_event.adress = form.Adress.data
 
-        save_to_json = ""
-        if new_event.status == 'Russian':
-            save_to_json = "russian_events.json"
-            CREATE_RUSSIAN_EVENTS.save_new_event(new_event.make_event(),
+        save_to_json = "events.json"
+        CREATE_ALL_EVENTS.save_new_event(new_event.make_event(),
                                                  new_event.name, save_to_json)
-        if new_event.status == 'International':
-            save_to_json = "international_events.json" 
-            CREATE_INTERNATIONAL_EVENTS.save_new_event(new_event.make_event(),
-                                                       new_event.name, save_to_json)
-        if new_event.status == 'Regional':
-            save_to_json = "regional_events.json"  
-            CREATE_REGIONAL_EVENTS.save_new_event(new_event.make_event(),
-                                                  new_event.name, save_to_json)
-        #events = create_events.get_render_events()
         return redirect('/')
     return render_template('admin.html',
                            title='About',
@@ -325,8 +310,8 @@ def login():
 @app.route('/archive')
 def archive():
     try:
-        CREATE_RUSSIAN_EVENTS.update("archive_events.json")
-        archive_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        CREATE_ALL_EVENTS.update("archive_events.json",'*')
+        archive_events = CREATE_ALL_EVENTS.get_render_events()
         for i, _ in enumerate(archive_events):
             archive_events[i] = Markup(archive_events[i])
     except JSONDecodeError:
@@ -340,8 +325,8 @@ def archive():
 @app.route('/event_calendar')
 def event_calendar():
     try:
-        CREATE_INTERNATIONAL_EVENTS.update("international_events.json")
-        new_int_events = CREATE_INTERNATIONAL_EVENTS.get_render_events()
+        CREATE_ALL_EVENTS.update("events.json",'International')
+        new_int_events = CREATE_ALL_EVENTS.get_render_events()
        
          #i really don't know why it doesn't work with normal for
         for i, _ in enumerate(new_int_events): 
@@ -349,8 +334,8 @@ def event_calendar():
     except JSONDecodeError:
         new_int_events = []
     try:
-        CREATE_REGIONAL_EVENTS.update("regional_events.json")
-        new_reg_events = CREATE_REGIONAL_EVENTS.get_render_events()
+        CREATE_ALL_EVENTS.update("events.json",'Regional')
+        new_reg_events = CREATE_ALL_EVENTS.get_render_events()
         
          #i really don't know why it doesn't work with normal for
         for i, _ in enumerate(new_reg_events): 
@@ -358,8 +343,8 @@ def event_calendar():
     except JSONDecodeError:
         new_reg_events = []
     try:
-        CREATE_RUSSIAN_EVENTS.update("russian_events.json")
-        new_rus_events = CREATE_RUSSIAN_EVENTS.get_render_events()
+        CREATE_ALL_EVENTS.update("events.json",'Russian')
+        new_rus_events = CREATE_ALL_EVENTS.get_render_events()
         
          #i really don't know why it doesn't work with normal for
         for i, _ in enumerate(new_rus_events): 
@@ -400,6 +385,7 @@ def dump_teams():
                            title='Выгрузка',
                            form=form,flag=flag)
 
+"""
 @app.route('/export_xlsx_events', methods=['GET', 'POST']) 
 @login_required
 def dump_events():
@@ -417,6 +403,8 @@ def dump_events():
     return render_template('export_events_xlsx.html', 
                            title='Выгрузка',
                            form=form,flag=flag)
+"""
+
 @app.route('/humanoid')
 def humanoid():
     return render_template('humanoid.html', 
@@ -434,3 +422,12 @@ def not_authorized(error):
 @app.errorhandler(500)
 def internal_error(error):
     return render_template('500.html'), 500
+
+"""
+@application.route('/admin_panel')
+@login_required
+def admin_panel():
+    return render_template('admin_panel.html', 
+        title='Admin panel'
+                          )
+"""
