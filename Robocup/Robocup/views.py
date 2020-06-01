@@ -87,9 +87,9 @@ class Dump_teams_form(Form):
 
 class Dump_events_Form(Form):
      Rank = SelectField('Rank', coerce=str, choices=[
-        ('regional_events', 'Региональныее мероприятия'),
-        ('russian_events', 'Всероссийские мероприятия'),
-        ('international_events', 'Международные мероприятия'),
+        ('Regional', 'Региональныее мероприятия'),
+        ('Russian', 'Всероссийские мероприятия'),
+        ('International', 'Международные мероприятия'),
         ('archive_events', 'Прошедшие мероприятия')])
 
 
@@ -472,15 +472,18 @@ def dump_teams():
                            title='Выгрузка',
                            form=form,flag=flag)
 
-"""
+
 @app.route('/export_xlsx_events', methods=['GET', 'POST']) 
 @login_required
 def dump_events():
     form = Dump_events_Form()
     flag=False
     if form.validate_on_submit():
-        with open(form.Rank.data+'.json') as data_file: 
-            data = json.load(data_file)
+        if form.Rank.data != 'archive_events':
+            data=CREATE_ALL_EVENTS.get_pure_events(form.Rank.data,"events.json")
+        else:
+            with open(form.Rank.data+'.json') as data_file: 
+                data = json.load(data_file)
         df = pd.DataFrame(data)
         if df.empty:  
             flag=True
@@ -490,7 +493,7 @@ def dump_events():
     return render_template('export_events_xlsx.html', 
                            title='Выгрузка',
                            form=form,flag=flag)
-"""
+
 
 @app.route('/humanoid')
 def humanoid():

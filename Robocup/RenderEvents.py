@@ -140,6 +140,15 @@ class RenderEvent:
                 self.names_list.append(key)
         return self.names_list
 
+    def get_pure_events(self,rank, json_file):
+        data={}
+        with open(json_file, "r",encoding='utf-8') as read_file:
+            self.data = json.load(read_file)
+        for key in self.data:
+            if self.data[key]['status'] == rank or rank == '*':
+                data[key]=self.data[key]
+        return data
+
     def get_render_events(self):
         events=deepcopy(self.render_events)
         return events
