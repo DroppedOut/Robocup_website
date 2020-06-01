@@ -98,11 +98,12 @@ class RenderEvent:
                     
             for i in range(len(self.events)):
                 self.render_events.append("".join(self.events[i]))
-                self.render_events[i] = '''<div class="col-md-4"> ''' + self.render_events[i] + \
-                                        '''<p><a class="btn btn-default" href="/login"> 
-                                        Удалить &raquo;</a></p> 
-                                        <p><a class="btn btn-default" href="/event_fix/'''+self.names_list[i]+'''"> 
-                                        Изменить &raquo;</a></p> </div>'''
+                self.render_events[i] = '''<form method="post">
+                                        <div class="col-md-4"> ''' + self.render_events[i] + \
+                                        '''<p><input type="submit" class = "btn btn-primary mb-2" value="Удалить"
+                                        name="r'''+self.names_list[i]+'''"></p> 
+                                        <p><input type="submit" class = "btn btn-primary mb-2" value="Изменить"
+                                        name="'''+self.names_list[i]+'''"></p> </form> </div>'''
 
     def save_new_event(self, new_event, event_name, json_file):
         with open(json_file, "r",encoding='utf-8') as read_file:
@@ -123,13 +124,21 @@ class RenderEvent:
             self.data = json.load(read_file)
             self.data.pop(event_name)
         with open(json_file, "w", encoding="utf-8") as file:
-            self.data[event_name + str(random.randint(0,4214231312))] = new_event
             json.dump(self.data, file)
 
     def get_existing_event(self,key,json_file):
         with open(json_file, "r",encoding='utf-8') as read_file:
             self.data = json.load(read_file)
             return self.data[key]
+
+    def get_event_names(self,rank,json_file):
+        with open(json_file, "r",encoding='utf-8') as read_file:
+            self.data = json.load(read_file)
+        self.names_list.clear()
+        for key in self.data:
+            if self.data[key]['status'] == rank or rank == '*':
+                self.names_list.append(key)
+        return self.names_list
 
     def get_render_events(self):
         events=deepcopy(self.render_events)

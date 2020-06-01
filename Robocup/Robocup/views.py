@@ -11,7 +11,7 @@ import os
 from flask import Flask 
 from flask_sqlalchemy import SQLAlchemy 
 from flask import Markup
-from flask import render_template, redirect
+from flask import render_template, redirect, request
 from flask.ext.wtf import Form
 from flask_wtf.file import FileField, FileRequired
 from flask import send_from_directory
@@ -401,9 +401,18 @@ def event_calendar():
                            rus_events = new_rus_events
                            )
 
-@app.route('/admin_event_calendar')
+@app.route('/admin_event_calendar', methods=['GET', 'POST'])
 @login_required
 def admin_event_calendar():
+    form=Form()
+    if request.method == 'POST':
+        names_list=CREATE_ALL_EVENTS.get_event_names('*',"events.json")
+        for item in names_list:
+            if str('r'+item) in request.form:
+                CREATE_ALL_EVENTS.destroy_event(item,"events.json")
+            elif str(item) in request.form:
+                return redirect('/event_fix/'+item)
+
     try:
         CREATE_ALL_EVENTS.admin_update("events.json",'International')
         new_int_events = CREATE_ALL_EVENTS.get_render_events()
@@ -437,8 +446,7 @@ def admin_event_calendar():
                            message='Dead.',
                            reg_events = new_reg_events,
                            int_events = new_int_events,
-                           rus_events = new_rus_events
-                           )
+                           rus_events = new_rus_events)
 
 @app.route('/export_xlsx_teams', methods=['GET', 'POST'])
 @login_required
