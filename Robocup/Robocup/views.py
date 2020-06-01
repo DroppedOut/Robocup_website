@@ -312,8 +312,8 @@ def error():
                            message='Dead.')
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route('/login/<name>', methods=['GET', 'POST'])
+def login(name=None):
     """Renders registration page"""
     form = LoginForm()
     if form.validate_on_submit():
@@ -327,7 +327,7 @@ def login():
 
         team = Team(form.TeamName.data, form.FirstMember.data, form.SecondMember.data,
                     form.ThirdMember.data, form.ForthMember.data, form.Mentor.data, 
-                    form.League.data)
+                    form.League.data,name)
        
        # qr_code = None
         team.insert()

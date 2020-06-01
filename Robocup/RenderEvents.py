@@ -61,7 +61,7 @@ class RenderEvent:
             for i in range(len(self.events)):
                 self.render_events.append("".join(self.events[i]))
                 self.render_events[i] = '''<div class="col-md-4"> ''' + self.render_events[i] + \
-                                        '''<p><a class="btn btn-default" href="/login"> 
+                                        '''<p><a class="btn btn-default" href="/login/'''+self.names_list[i]+'''"> 
                                         Зарегестрироваться &raquo;</a></p> </div>'''
 
     def admin_update(self, json_file,rank):
