@@ -7,7 +7,21 @@ import os.path
 from copy import deepcopy
 
 class RenderEvent:
+    def add_url(self, info):
+        try:
+            info = str(info)
+            if "http" in info or "https" in info:
+                print(info.find("https"))
+                url = info[info.find("https"):len(info)]
+                print(url)
+                return url
+        except Exception as e :
+            f = open("add_url_debug.txt",'w')
+            f.write(str(e))
+            f.close()
+            return
 
+        
     def __init__(self, json_file):
         self.events = [] 
         self.render_events = []
@@ -37,22 +51,35 @@ class RenderEvent:
             self.data = dict(OrderedDict(sorted(sorted_events.items(), key=lambda t: int(t[1]["date"][0:2])+int(t[1]["date"][3:5])*30+int(t[1]["date"][6:10])*365)))
             #sort 
             #print(self.data)
+
             index = -1
             self.names_list.clear()
             for key in self.data:
+               #print (self.data[key]['desc'])
+               self.add_url(self.data[key]['desc'])
                if self.data[key]['status'] == rank or rank == '*':
                    self.names_list.append(key)
-                   print (self.data[key]['date'])        
+                           
                    index+=1
                    self.events.append([])
                    #for k in self.data[key]:
                    self.events[index].append("<h2> " + str(self.data[key]['name']) + "<br><strong> " \
                          + str(self.data[key]['status']) + "</strong></h2>")
-                   self.events[index].append('<p> <li style="list-style-type: none;" > \
-                         <a href="#" class="" style="padding: 0px" data-toggle="dropdown" role="button" \
-                         aria-haspopup="true" aria-expanded="false"><strong>Инфо</strong> \
-                         <span class="caret"></span></a> <ul class="dropdown-menu"> \
-                      <li>'+ str(self.data[key]['desc']) +'</li></ul> </li>')
+                   if "http" in self.data[key]['desc'] or "https" in self.data[key]['desc']:
+                       new_data = str(self.data[key]['desc'])
+                       new_data = new_data[0:new_data.find("https")]
+                       print(new_data)
+                       self.events[index].append('<p> <li style="list-style-type: none;" > \
+                             <a href="#" class="" style="padding: 0px" data-toggle="dropdown" role="button" \
+                             aria-haspopup="true" aria-expanded="false"><strong>Инфо</strong> \
+                             <span class="caret"></span></a> <ul class="dropdown-menu"> \
+                          <li>'+ str(new_data) + '<a href = "' +self.add_url(self.data[key]['desc'])+'" >'  +'Ссылка </a></li></ul> </li>')
+                   else:
+                       self.events[index].append('<p> <li style="list-style-type: none;" > \
+                             <a href="#" class="" style="padding: 0px" data-toggle="dropdown" role="button" \
+                             aria-haspopup="true" aria-expanded="false"><strong>Инфо</strong> \
+                             <span class="caret"></span></a> <ul class="dropdown-menu"> \
+                          <li>'+ str(self.data[key]['desc']) +'</li></ul> </li>')
                    self.events[index].append('<strong> Страна: </strong>' + str(self.data[key]['country']) + "<br>")
                    self.events[index].append("<p> <strong> Город: </strong>" + str(self.data[key]['city']) + "<br>")
                    self.events[index].append("<strong>Адрес: </strong>" + str(self.data[key]['adress']) + "<br>")
@@ -80,9 +107,10 @@ class RenderEvent:
             for key in self.data:
                if self.data[key]['status'] == rank or rank == '*':
                    self.names_list.append(key)
-                   print (self.data[key]['date'])        
+                   #print (self.data[key]['date'])        
                    index+=1
                    self.events.append([])
+                   print(self.data[key][desc])
                    #for k in self.data[key]:
                    self.events[index].append("<h2> " + str(self.data[key]['name']) + "<br><strong> " \
                          + str(self.data[key]['status']) + "</strong></h2>")
@@ -164,7 +192,7 @@ class RenderEvent:
             if dt<sortkey:
                 with open("archive_events.json", "w", encoding="utf-8") as file:
                     data_old[key] = data_all[key]
-                    print(data_old[key])
+                    #print(data_old[key])
                     json.dump(data_old, file)
                     data_all.pop(key)
         with open(json_file, "w", encoding="utf-8") as file:

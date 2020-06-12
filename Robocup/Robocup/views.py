@@ -116,7 +116,7 @@ def home():
     try:
         CREATE_ALL_EVENTS.update("events.json",'*')
         events = CREATE_ALL_EVENTS.get_render_events()
-        print(events)
+        #print(events)
          #i really don't know why it doesn't work with normal for
         for i, _ in enumerate(events): 
             events[i] = Markup(events[i])
@@ -211,7 +211,7 @@ def admin():
         cur.execute("SELECT * FROM Admins")
  
         rows = cur.fetchall()
-        print(len(rows))
+       # print(len(rows))
 
         if rows[0][0] == form.Login_input.data and rows[0][1] == form.Password_input.data:
             user = User.query.filter_by(username='Admin').first()  
@@ -320,7 +320,7 @@ def login(name=None):
        
         filename = form.AttachFile.data.filename
         try:
-            transliterate.translit(filename, reversed=True)
+            filename = transliterate.translit(filename, reversed=True)
         except transliterate.exceptions.LanguageDetectionError:
             filename = form.AttachFile.data.filename
         form.AttachFile.data.save('upload/' + filename)
@@ -334,6 +334,7 @@ def login(name=None):
         team.get_text()
         team.write()
         qr_code = qrcode.make(team.text)
+        print("qr sucseed")
         letters = string.ascii_lowercase
         qr_code_fn = "qr/"
         qr_code_fn += ''.join(random.choice(letters) for i in range(10))
@@ -342,7 +343,9 @@ def login(name=None):
         sender = Sender
         #send qr
         sender.send_qr(sender, qr_code_fn, form.Email.data, "Registration qr code" )
+        print("qr sended")
         sender.send_letter(sender, 'upload/' + filename, team.text)
+        print("sended info")
         return redirect('/')
     return render_template('register.html', 
                            title='Sign In',
