@@ -29,7 +29,7 @@ from team_class import Team
 from em import Sender
 from RenderEvents import RenderEvent
 from event import Event
-from Robocup import app
+from Robocup import application
 import database 
 import sqlite3
 import pandas as pd
@@ -95,11 +95,11 @@ class Dump_events_Form(Form):
 
 CREATE_ALL_EVENTS = RenderEvent("events.json")
 SECRET_KEY = os.urandom(32)
-app.config['SECRET_KEY'] = SECRET_KEY
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///login.db'
-db = SQLAlchemy(app)
+application.config['SECRET_KEY'] = SECRET_KEY
+application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///login.db'
+db = SQLAlchemy(application)
 login_manager = LoginManager()
-login_manager.init_app(app)
+login_manager.init_app(application)
 class User(UserMixin,db.Model):
     id = db.Column(db.Integer,primary_key = True)
     username = db.Column(db.String(30),unique = True)
@@ -109,8 +109,8 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 db.create_all()
 
-@app.route('/')
-@app.route('/home')
+@application.route('/')
+@application.route('/home')
 def home():
     """Renders the home page."""
     try:
@@ -127,7 +127,7 @@ def home():
                            year=datetime.now().year,
                            event=events)
 
-@app.route('/contact')
+@application.route('/contact')
 def contact():
     """Renders the contact page."""    
     return render_template('contact.html',
@@ -136,7 +136,7 @@ def contact():
                            message='Your contact page.',
                            )
 
-@app.route('/russian_events')
+@application.route('/russian_events')
 def russian_events():
     """Renders the about page."""
     try:
@@ -154,7 +154,7 @@ def russian_events():
                            message='Your application description page.',
                            event=new_events)
      
-@app.route('/regional_events')
+@application.route('/regional_events')
 def regional_events():
     """Renders the about page."""
     try:
@@ -173,7 +173,7 @@ def regional_events():
                            event=new_events
        )
 
-@app.route('/international_events')
+@application.route('/international_events')
 def international_events():
     """Renders the about page."""
     try:
@@ -193,7 +193,7 @@ def international_events():
                            )
       
 
-@app.route('/about')
+@application.route('/about')
 def about():
     """Renders the about page."""
     return render_template('about.html',
@@ -201,7 +201,7 @@ def about():
                            year=datetime.now().year,
                            message='Your application description page.')
 
-@app.route('/admin', methods=['GET', 'POST'])
+@application.route('/admin', methods=['GET', 'POST'])
 def admin():
     form = AdminAuth()
     if form.validate_on_submit():
@@ -226,7 +226,7 @@ def admin():
                            form=form,
                            )
 
-@app.route('/event_generator', methods=['GET', 'POST'])
+@application.route('/event_generator', methods=['GET', 'POST'])
 @login_required
 def event_generator():
     """Renders the about page."""
@@ -260,7 +260,7 @@ def event_generator():
                            message='Your application description page.',
                            form=form)
        
-@app.route('/event_fix/<name>', methods=['GET', 'POST'])
+@application.route('/event_fix/<name>', methods=['GET', 'POST'])
 @login_required
 def event_fix(name=None):
     """Renders the about page."""
@@ -303,7 +303,7 @@ def event_fix(name=None):
                            form=form)
 
 
-@app.route('/error')
+@application.route('/error')
 def error():
     """Renders the about page."""
     return render_template('Error.html',
@@ -312,7 +312,7 @@ def error():
                            message='Dead.')
 
 
-@app.route('/login/<name>', methods=['GET', 'POST'])
+@application.route('/login/<name>', methods=['GET', 'POST'])
 def login(name=None):
     """Renders registration page"""
     form = LoginForm()
@@ -351,7 +351,7 @@ def login(name=None):
                            title='Sign In',
                            form=form)
 
-@app.route('/archive')
+@application.route('/archive')
 def archive():
     try:
         CREATE_ALL_EVENTS.update("archive_events.json",'*')
@@ -366,7 +366,7 @@ def archive():
                            )
 
 
-@app.route('/event_calendar')
+@application.route('/event_calendar')
 def event_calendar():
     try:
         CREATE_ALL_EVENTS.update("events.json",'International')
@@ -404,7 +404,7 @@ def event_calendar():
                            rus_events = new_rus_events
                            )
 
-@app.route('/admin_event_calendar', methods=['GET', 'POST'])
+@application.route('/admin_event_calendar', methods=['GET', 'POST'])
 @login_required
 def admin_event_calendar():
     form=Form()
@@ -451,7 +451,7 @@ def admin_event_calendar():
                            int_events = new_int_events,
                            rus_events = new_rus_events)
 
-@app.route('/export_xlsx_teams', methods=['GET', 'POST'])
+@application.route('/export_xlsx_teams', methods=['GET', 'POST'])
 @login_required
 def dump_teams():
     form = Dump_teams_form()
@@ -476,7 +476,7 @@ def dump_teams():
                            form=form,flag=flag)
 
 
-@app.route('/export_xlsx_events', methods=['GET', 'POST']) 
+@application.route('/export_xlsx_events', methods=['GET', 'POST']) 
 @login_required
 def dump_events():
     form = Dump_events_Form()
@@ -498,25 +498,25 @@ def dump_events():
                            form=form,flag=flag)
 
 
-@app.route('/humanoid')
+@application.route('/humanoid')
 def humanoid():
     return render_template('humanoid.html', 
                            title='Humanoid league'
                            ) 
 
-@app.errorhandler(404)
+@application.errorhandler(404)
 def not_found_error(error):
     return render_template('404.html'), 404
 
-@app.errorhandler(401)
+@application.errorhandler(401)
 def not_authorized(error):
     return redirect('/admin')
 
-@app.errorhandler(500)
+@application.errorhandler(500)
 def internal_error(error):
     return render_template('500.html'), 500
 
-@app.route('/admin_panel')
+@application.route('/admin_panel')
 @login_required
 def admin_panel():
     return render_template('admin_panel.html', 

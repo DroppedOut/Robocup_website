@@ -11,9 +11,9 @@ class RenderEvent:
         try:
             info = str(info)
             if "http" in info or "https" in info:
-                print(info.find("https"))
+                
                 url = info[info.find("https"):len(info)]
-                print(url)
+            
                 return url
         except Exception as e :
             f = open("add_url_debug.txt",'w')
