@@ -15,7 +15,7 @@ from flask import render_template, redirect, request
 from flask.ext.wtf import Form
 from flask_wtf.file import FileField, FileRequired
 from flask import send_from_directory
-from wtforms import TextField, SelectField
+from wtforms import TextField, SelectField, PasswordField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Required
 from wtforms.fields import StringField
@@ -54,6 +54,25 @@ class LoginForm(Form):
         ('Robocup@home', 'Robocup@home'),
         ('Robocup@WorkIndustrial', 'Robocup@WorkIndustrial')])
     AttachFile = FileField('AttachFile', validators=[FileRequired()])
+class RefreeForm(Form):
+    Login = TextField('Login', validators=[Required()])
+    Email = TextField("Email",  [validators.Required("Please enter your email address."),
+                                 validators.Email("Please enter your email address.")])
+    Password = PasswordField('New Password', [
+        validators.Required("please enter your password"),
+        validators.EqualTo('Confirm', message='Passwords must match')
+    ])
+    Confirm = PasswordField('Repeat Password')
+    FirstName = TextField('FirstName', validators=[Required()])
+    SecondName = TextField('SecondName', validators=[Required()])
+    League = SelectField('League', coerce=str, choices=[
+        ('RobocupJuniorRescue Line', 'RobocupJuniorRescue Line'),
+        ('RobocupJuniorRescue Maze', 'RobocupJuniorRescue Maze'),
+        ('RobocupJuniorRescue OnStage', 'RobocupJuniorRescue OnStage'),
+        ('RobocupJuniorRescue CoSpace', 'RobocupJuniorRescue CoSpace'),
+        ('RobocupRescue Maze', 'RobocupRescue Maze'),
+        ('Robocup@home', 'Robocup@home'),
+        ('Robocup@WorkIndustrial', 'Robocup@WorkIndustrial')])
 
 class AdminForm(Form):
     """ ADMIN FORM CLASS"""
@@ -72,7 +91,7 @@ class AdminForm(Form):
 class AdminAuth(Form):
     """class for admin auth."""
     Login_input = TextField('Login_input', validators=[Required()])
-    Password_input = TextField('Password_input', validators=[Required()])
+    Password_input = PasswordField('Password_input', validators=[Required()])
 
 class Dump_teams_form(Form):
      League = SelectField('League', coerce=str, choices=[
@@ -91,7 +110,12 @@ class Dump_events_Form(Form):
         ('Russian', 'Всероссийские мероприятия'),
         ('International', 'Международные мероприятия'),
         ('archive_events', 'Прошедшие мероприятия')])
-
+class RefreeAuthForm(Form):
+    Login = TextField('Login_input', validators=[Required()])
+    Password = PasswordField('New Password', [
+        validators.Required("please enter your password")
+        
+    ])
 
 CREATE_ALL_EVENTS = RenderEvent("events.json")
 SECRET_KEY = os.urandom(32)
@@ -522,3 +546,42 @@ def admin_panel():
     return render_template('admin_panel.html', 
         title='Admin panel'
                           )
+@application.route('/refree_register', methods=['GET', 'POST'])
+def refree_register():
+    form = RefreeForm()
+    if form.validate_on_submit():
+        conn = sqlite3.connect("data.db")
+        cur = conn.cursor()
+        
+        
+        query = "INSERT INTO refrees VALUES(?,?,?,?,?,?,?)"
+        cur.execute(query, (form.Login.data, form.Email.data, form.Password.data ,
+                            form.FirstName.data, form.SecondName.data, form.League.data," "))
+        conn.commit()
+        conn.close()
+        return redirect('/')
+    return render_template('refree_register.html', 
+        title='Admin panel',
+        form = form   )
+@application.route('/refree_auth', methods=['GET', 'POST'])
+def refree_auth():
+    form = RefreeAuthForm()
+    if form.validate_on_submit():
+        conn = sqlite3.connect("data.db")
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM refrees")
+        rows = cur.fetchall()
+       # print(rows)
+        for i in rows:
+            if i[0] == form.Login.data  or i[1] == form.Login.data and i[2] == form.Password.data:
+                print("found!")
+                print(form.Login.data)
+                print(form.Password.data)
+                print(i[0],i[1],i[3])
+      
+                return redirect('/')
+            else:
+                print("go away")
+    return render_template('refree_auth.html', 
+        title='Admin panel',
+        form = form   )
