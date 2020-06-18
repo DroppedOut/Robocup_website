@@ -23,7 +23,7 @@ from wtforms.widgets import TextArea
 from wtforms import validators
 from wtforms.fields.html5 import EmailField
 # from wtforms.validators import ValidationError
-from flask_login import LoginManager, UserMixin, login_user, login_required
+from flask_login import LoginManager, UserMixin, login_user, login_required, current_user ,logout_user
 import transliterate
 from team_class import Team
 from em import Sender
@@ -238,9 +238,11 @@ def admin():
        # print(len(rows))
 
         if rows[0][0] == form.Login_input.data and rows[0][1] == form.Password_input.data:
+            logout_user()
             user = User.query.filter_by(username='Admin').first()  
             login_user(user)
             print("SUPERUSER JOINED CHAT")
+            print(current_user.username)
             
             return redirect('/admin_panel')
     return render_template('admin_auth.html',
@@ -254,6 +256,8 @@ def admin():
 @login_required
 def event_generator():
     """Renders the about page."""
+    if current_user.username!='Admin':
+        return redirect('/')
     form = AdminForm()
     new_event = Event()
 
@@ -287,6 +291,8 @@ def event_generator():
 @application.route('/event_fix/<name>', methods=['GET', 'POST'])
 @login_required
 def event_fix(name=None):
+    if current_user.username!='Admin':
+        return redirect('/')
     """Renders the about page."""
     form = AdminForm()
     new_event = Event()
@@ -431,6 +437,8 @@ def event_calendar():
 @application.route('/admin_event_calendar', methods=['GET', 'POST'])
 @login_required
 def admin_event_calendar():
+    if current_user.username!='Admin':
+        return redirect('/')
     form=Form()
     if request.method == 'POST':
         names_list=CREATE_ALL_EVENTS.get_event_names('*',"events.json")
@@ -478,6 +486,8 @@ def admin_event_calendar():
 @application.route('/export_xlsx_teams', methods=['GET', 'POST'])
 @login_required
 def dump_teams():
+    if current_user.username!='Admin':
+        return redirect('/')
     form = Dump_teams_form()
     flag=False
     if form.validate_on_submit():
@@ -503,6 +513,8 @@ def dump_teams():
 @application.route('/export_xlsx_events', methods=['GET', 'POST']) 
 @login_required
 def dump_events():
+    if current_user.username!='Admin':
+        return redirect('/')
     form = Dump_events_Form()
     flag=False
     if form.validate_on_submit():
@@ -543,6 +555,8 @@ def internal_error(error):
 @application.route('/admin_panel')
 @login_required
 def admin_panel():
+    if current_user.username != 'Admin':
+        return redirect('/')
     return render_template('admin_panel.html', 
         title='Admin panel'
                           )
@@ -578,7 +592,22 @@ def refree_auth():
                 print(form.Login.data)
                 print(form.Password.data)
                 print(i[0],i[1],i[3])
-      
+                logout_user()
+                try:
+
+                    User.query.delete()
+                    db.session.commit()
+                except:
+                    pass
+
+                cu = User(username = form.Login.data)
+                ab = User(username = 'Admin')
+                db.session.add(cu)
+                db.session.commit()
+                db.session.add(ab)
+                db.session.commit()
+                user = User.query.filter_by(username=form.Login.data).first()  
+                login_user(user)
                 return redirect('/')
             else:
                 print("go away")
