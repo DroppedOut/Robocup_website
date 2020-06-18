@@ -3,6 +3,11 @@ Routes and views for the flask application.
 """
 # v.02.3 (21 57) 
 #import sqlite3
+
+#to do :
+#    fix 401 error
+#    add refree cabinet
+#
 from datetime import datetime
 from json import JSONDecodeError
 import json
@@ -116,6 +121,12 @@ class RefreeAuthForm(Form):
         validators.Required("please enter your password")
         
     ])
+class Refree:
+    def __init__(self, name, secondName, email, league):
+        self.name = name
+        self.secondName = secondName
+        self.email = email
+        self.league = league
 
 CREATE_ALL_EVENTS = RenderEvent("events.json")
 SECRET_KEY = os.urandom(32)
@@ -546,6 +557,7 @@ def not_found_error(error):
 
 @application.errorhandler(401)
 def not_authorized(error):
+    # fix this
     return redirect('/admin')
 
 @application.errorhandler(500)
@@ -614,3 +626,43 @@ def refree_auth():
     return render_template('refree_auth.html', 
         title='Admin panel',
         form = form   )
+class league_select(Form):
+     League = SelectField('League', coerce=str,validators= [Required()], choices=[
+        ('RobocupJuniorRescue Line', 'RobocupJuniorRescue Line'),
+        ('RobocupJuniorRescue Maze', 'RobocupJuniorRescue Maze'),
+        ('RobocupJuniorRescue OnStage', 'RobocupJuniorRescue OnStage'),
+        ('RobocupJuniorRescue CoSpace', 'RobocupJuniorRescue CoSpace'),
+        ('RobocupRescue Maze', 'RobocupRescue Maze'),
+        ('Robocup@home', 'Robocup@home'),
+        ('Robocup@WorkIndustrial', 'Robocup@WorkIndustrial'),
+        ])
+@application.route('/refree_cabinet', methods=['GET', 'POST'])
+#@login_required
+
+def refree_cabinet():
+    # '/refree_cabinet/<name>'
+    #usr = current_user.username
+    conn = sqlite3.connect("data.db")
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM refrees WHERE login = ?", ('Test1',))
+    rows = cur.fetchall()
+    print(rows)
+    form = league_select()
+    form.League.data = rows[0][5]
+    refree = Refree(rows[0][3],rows[0][4],rows[0][1],rows[0][5])
+    if request.method == 'POST':
+        #форма не работает нормально
+        cur.execute("UPDATE refrees SET league = ? WHERE login = ?", (form.League.data, 'Test1',))
+        print(form.League.data)
+        conn.commit()
+        return redirect('/')
+       # UPDATE table
+#SET column_1 = new_value_1,
+    #column_2 = new_value_2
+#WHERE
+    return render_template('refree_cabinet.html', 
+        title='Admin panel',
+        form = form,
+        refree = refree
+        )

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="r-sidebar">
+				<div class="r-sidebar-item">
+					<!-- Sidebar Image -->
+					<div class="img">
+						<a href="ui-304.html#"><img src="img/ui-304/user.jpg" alt="" class="img-responsive"></a>
+					</div>
+					<!-- Name -->
+					<div class="name">
+						<h3>{{refree.name}}</h3>
+
+					</div>
+					<div class="clearfix"></div>
+				</div>
+				<!-- Detail -->
+				<div class="r-detail">
+					<table>	
+						<tbody><tr>
+							<th>Имя</th>
+							<td>{{refree.name}}</td>
+						</tr>
+						<tr>
+							<th>Фамилия</th>
+							<td>{{refree.secondName}}</td>
+						</tr>
+						<tr>
+							<th>Эл.почта</th>
+							<td>{{refree.email}}</td>
+						</tr>
+						<tr>
+							<th>Лига судейства</th>
+							<td>{{form.League}}</td>
+
+						</tr>
+					</tbody></table>
+                    <form action=""  method="post" name="login" enctype="multipart/form-data">
+    {{form.hidden_tag()}}
+                        <p><input type="submit" class = "btn btn-primary mb-2" value="Sign In"></p>
+</form>
+				</div>
+
+
+{% endblock %}
