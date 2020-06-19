@@ -12,7 +12,7 @@ from datetime import datetime
 from json import JSONDecodeError
 import json
 import os
-
+from copy import deepcopy
 from flask import Flask 
 from flask_sqlalchemy import SQLAlchemy 
 from flask import Markup
@@ -648,15 +648,16 @@ def refree_cabinet():
     cur.execute("SELECT * FROM refrees WHERE login = ?", ('Test1',))
     rows = cur.fetchall()
     print(rows)
-    form = league_select()
-    form.League.data = rows[0][5]
+    form = RefreeForm()
+    form.League.data = deepcopy(rows[0][5]) # присвоить значение из бд
     refree = Refree(rows[0][3],rows[0][4],rows[0][1],rows[0][5])
     if request.method == 'POST':
         #форма не работает нормально
-        cur.execute("UPDATE refrees SET league = ? WHERE login = ?", (form.League.data, 'Test1',))
+        cur.execute("UPDATE refrees SET league = ? WHERE login = ?", (form.League.data, 'Test1',)) # обновить бд
         print(form.League.data)
         conn.commit()
-        return redirect('/')
+        #form.League.data = rows[0][5]
+        return redirect('/refree_cabinet')
        # UPDATE table
 #SET column_1 = new_value_1,
     #column_2 = new_value_2
